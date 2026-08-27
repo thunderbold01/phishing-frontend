@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: phishing-frontend
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /apos_login
+        destination: /apos_login.html
+      - type: rewrite
+        source: /logs
+        destination: /logs.html
+      - type: rewrite
+        source: /sw.js
+        destination: /sw.js
+      - type: rewrite
+        source: /manifest.json
+        destination: /manifest.json
+    headers:
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
+      - path: /manifest.json
+        name: Content-Type
+        value: application/manifest+json
+    envVars:
+      - key: VITE_API_URL
+        value: https://phishing-backend.onrender.com/api

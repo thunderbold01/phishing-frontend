@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e27">
+<meta name="description" content="Não Seja a Próxima Vítima - Conscientização sobre segurança digital">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<title>Não Seja a Próxima Vítima</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color 0.8s ease, color 0.8s ease;
+  background:#0a0e27;
+  color:#fff;
+  -webkit-text-size-adjust:100%;
+}
+
+/* === BACKGROUND IMAGE WITH PARALLAX === */
+.bg-image{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:120%;
+  background:url('https://image.qwenlm.ai/public_source/4a009c90-a01d-4643-8178-71ffdb34b849/14877a709-ed05-4289-85cd-2062fc6a109c.png') center/cover no-repeat;
+  z-index:0;
+  will-change:transform;
+  filter:brightness(0.4);
+  transition:filter 0.8s ease;
+}
+
+.bg-overlay{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:1;
+  transition:background 0.8s ease;
+  background:linear-gradient(180deg,rgba(10,14,39,0.7) 0%,rgba(10,14,39,0.9) 100%);
+  pointer-events:none;
+}
+
+/* === PROGRESS BAR === */
+.progress-bar{
+  position:fixed;top:0;left:0;
+  height:3px;
+  background:linear-gradient(90deg,#ff3b3b,#00e5ff);
+  z-index:100;
+  width:0%;
+  transition:width 0.1s;
+}
+
+/* === NAV === */
+.top-nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:50;
+  padding:14px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(10,14,39,0.5);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:all 0.8s ease;
+}
+.nav-logo{
+  display:flex;align-items:center;gap:8px;
+  font-weight:700;font-size:0.95rem;
+}
+.nav-logo-icon{
+  width:28px;height:28px;
+  border:2px solid #fff;
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.8s ease;
+}
+.nav-logo-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;transition:stroke 0.8s ease}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{
+  color:rgba(255,255,255,0.8);
+  text-decoration:none;
+  font-size:0.82rem;
+  font-weight:500;
+  transition:color 0.3s;
+  position:relative;
+}
+.nav-links a::after{
+  content:'';
+  position:absolute;bottom:-4px;left:0;
+  width:0;height:2px;
+  background:#fff;
+  transition:width 0.3s;
+}
+.nav-links a:hover::after{width:100%}
+.nav-auth{display:flex;gap:8px}
+.nav-btn{
+  padding:7px 14px;
+  border-radius:18px;
+  font-size:0.72rem;
+  font-weight:600;
+  cursor:pointer;
+  border:none;
+  font-family:inherit;
+  transition:all 0.3s;
+}
+.nav-btn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.3)}
+.nav-btn.primary{background:#fff;color:#0a0e27}
+.nav-btn:hover{transform:translateY(-2px)}
+
+@media(max-width:768px){
+  .nav-links,.nav-auth{display:none}
+}
+
+/* === BULLETS === */
+.nav-bullets{
+  position:fixed;right:12px;top:50%;
+  transform:translateY(-50%);
+  z-index:50;
+  display:flex;flex-direction:column;gap:14px;
+}
+.bullet{
+  width:10px;height:10px;
+  border-radius:50%;
+  background:transparent;
+  border:2px solid rgba(255,255,255,0.4);
+  cursor:pointer;
+  transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  position:relative;
+  padding:0;
+  min-width:10px;
+}
+.bullet:hover{
+  background:rgba(255,255,255,0.3);
+  transform:scale(1.4);
+}
+.bullet.active{
+  background:#fff;
+  border-color:#fff;
+  transform:scale(1.5);
+  box-shadow:0 0 20px rgba(255,255,255,0.6);
+}
+.bullet-label{
+  position:absolute;right:22px;top:50%;
+  transform:translateY(-50%);
+  background:rgba(0,0,0,0.9);
+  padding:5px 10px;
+  border-radius:6px;
+  font-size:10px;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
+  color:#fff;
+}
+.bullet:hover .bullet-label{opacity:1}
+
+@media(max-width:768px){
+  .nav-bullets{right:8px;gap:10px}
+  .bullet{width:8px;height:8px;min-width:8px}
+  .bullet-label{display:none}
+}
+
+/* === SECTIONS === */
+.section{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:100px 16px 60px;
+  position:relative;
+  z-index:2;
+}
+.section-content{
+  max-width:1200px;
+  width:100%;
+  opacity:0;
+  transform:translateY(40px);
+  transition:opacity 0.9s ease, transform 0.9s ease;
+}
+.section-content.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* === HERO === */
+.hero-content{
+  text-align:center;
+  max-width:900px;
+  margin:0 auto;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;
+  background:rgba(255,59,59,0.15);
+  border:1.5px solid rgba(255,59,59,0.4);
+  border-radius:30px;
+  font-size:0.65rem;
+  color:#ff6b6b;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:24px;
+  font-weight:700;
+  transition:all 0.8s ease;
+}
+.hero-badge::before{
+  content:'';
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#ff3b3b;
+  animation:pulseDot 2s infinite;
+}
+@keyframes pulseDot{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.4;transform:scale(1.6)}
+}
+.hero-title{
+  font-size:clamp(2.2rem,10vw,6rem);
+  font-weight:900;
+  line-height:0.95;
+  margin-bottom:16px;
+  letter-spacing:-1px;
+  text-transform:uppercase;
+}
+.hero-title .highlight{
+  display:block;
+  background:linear-gradient(135deg,#ff3b3b,#ff6b6b,#ffa500);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  transform:rotate(-2deg);
+  transform-origin:left;
+}
+.hero-subtitle{
+  font-size:clamp(0.85rem,3vw,1.5rem);
+  color:rgba(255,255,255,0.7);
+  margin-bottom:20px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  font-weight:600;
+  transition:color 0.8s ease;
+}
+.hero-desc{
+  font-size:clamp(0.9rem,2.5vw,1.15rem);
+  color:rgba(255,255,255,0.6);
+  line-height:1.7;
+  margin-bottom:32px;
+  max-width:700px;
+  margin-left:auto;margin-right:auto;
+  transition:color 0.8s ease;
+}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:16px 32px;
+  background:transparent;
+  border:2px solid #fff;
+  border-radius:50px;
+  color:#fff;
+  font-weight:700;
+  font-size:0.9rem;
+  cursor:pointer;
+  transition:all 0.4s;
+  text-decoration:none;
+  font-family:inherit;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+.hero-cta:hover{
+  background:#fff;
+  color:#0a0e27;
+  transform:translateY(-3px) rotate(-1deg);
+}
+
+.scroll-hint{
+  position:absolute;bottom:24px;left:50%;
+  transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  opacity:0.6;
+  animation:scrollBounce 2s infinite;
+}
+@keyframes scrollBounce{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-8px)}
+}
+.scroll-hint span{font-size:0.6rem;text-transform:uppercase;letter-spacing:3px;color:#fff;transition:color 0.8s ease}
+
+/* === DIAGONAL ELEMENTS === */
+.diagonal-line{
+  position:absolute;
+  width:200px;
+  height:2px;
+  background:rgba(255,255,255,0.1);
+  transform:rotate(-45deg);
+  transition:background 0.8s ease;
+}
+
+/* === SECTION HEADER === */
+.section-header{margin-bottom:40px;position:relative}
+.section-tag{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:4px;
+  font-size:0.65rem;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:16px;
+  font-weight:700;
+  transform:rotate(-1deg);
+  transition:all 0.8s ease;
+}
+.tag-red{background:rgba(255,59,59,0.2);border:1.5px solid rgba(255,59,59,0.5);color:#ff6b6b}
+.tag-orange{background:rgba(255,165,0,0.2);border:1.5px solid rgba(255,165,0,0.5);color:#ffa500}
+.tag-cyan{background:rgba(0,229,255,0.2);border:1.5px solid rgba(0,229,255,0.5);color:#00e5ff}
+.section-title{
+  font-size:clamp(2rem,7vw,4rem);
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-1px;
+  text-transform:uppercase;
+  transition:color 0.8s ease;
+}
+
+/* === THREATS GRID === */
+.threats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+@media(max-width:900px){.threats-grid{grid-template-columns:1fr;gap:16px}}
+
+.threat-card{
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.1);
+  border-radius:0;
+  padding:32px 24px;
+  cursor:pointer;
+  transition:all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+  position:relative;
+  overflow:hidden;
+  min-height:340px;
+  display:flex;flex-direction:column;
+  transform:rotate(0deg);
+}
+.threat-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  opacity:0;
+  transition:opacity 0.5s;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+}
+.threat-card:hover{
+  transform:translateY(-8px) rotate(-1deg);
+  border-color:rgba(255,255,255,0.3);
+  box-shadow:0 30px 60px rgba(0,0,0,0.4);
+}
+.threat-card:hover::before{opacity:1}
+.threat-card:active{transform:translateY(-4px) rotate(0deg) scale(0.98)}
+
+.threat-card:nth-child(1){transform:rotate(-1deg)}
+.threat-card:nth-child(2){transform:rotate(1deg)}
+.threat-card:nth-child(3){transform:rotate(-0.5deg)}
+
+.threat-number{
+  position:absolute;top:16px;right:24px;
+  font-size:4rem;font-weight:900;
+  opacity:0.08;line-height:1;
+  font-style:italic;
+}
+.threat-icon{
+  width:60px;height:60px;
+  margin-bottom:20px;
+  position:relative;z-index:1;
+}
+.threat-icon svg{
+  width:100%;height:100%;
+  stroke:#fff;
+  fill:none;
+  stroke-width:1.5;
+  transition:stroke 0.8s ease;
+}
+.threat-tag{
+  display:inline-block;
+  padding:4px 12px;
+  font-size:0.6rem;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-weight:700;
+  margin-bottom:14px;
+  position:relative;z-index:1;
+  align-self:flex-start;
+  transform:rotate(-2deg);
+}
+.threat-tag.danger{background:rgba(255,59,59,0.2);color:#ff6b6b;border:1px solid rgba(255,59,59,0.4)}
+.threat-tag.warning{background:rgba(255,165,0,0.2);color:#ffa500;border:1px solid rgba(255,165,0,0.4)}
+.threat-tag.critical{background:rgba(168,85,247,0.2);color:#c084fc;border:1px solid rgba(168,85,247,0.4)}
+
+.threat-title{
+  font-size:clamp(1.4rem,4vw,1.8rem);
+  font-weight:900;
+  margin-bottom:12px;
+  position:relative;z-index:1;
+  text-transform:uppercase;
+  letter-spacing:-0.5px;
+  transition:color 0.8s ease;
+}
+.threat-desc{
+  color:rgba(255,255,255,0.6);
+  font-size:clamp(0.85rem,2vw,0.95rem);
+  line-height:1.6;
+  position:relative;z-index:1;
+  flex:1;
+  transition:color 0.8s ease;
+}
+.threat-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:16px;
+  font-size:0.8rem;font-weight:700;
+  color:rgba(255,255,255,0.7);
+  position:relative;z-index:1;
+  transition:all 0.3s;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.threat-card:hover .threat-cta{color:#fff;transform:translateX(5px)}
+
+/* === STATS === */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+@media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
+
+.stat-card{
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.1);
+  padding:24px 16px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.4s;
+  position:relative;
+  transform:rotate(0deg);
+}
+.stat-card:nth-child(odd){transform:rotate(-1deg)}
+.stat-card:nth-child(even){transform:rotate(1deg)}
+.stat-card:hover{
+  transform:translateY(-5px) rotate(0deg);
+  border-color:rgba(255,255,255,0.3);
+}
+.stat-value{
+  font-size:clamp(1.8rem,5vw,2.5rem);
+  font-weight:900;
+  background:linear-gradient(135deg,#ff3b3b,#ff6b6b);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  font-style:italic;
+}
+.stat-label{
+  font-size:0.68rem;
+  color:rgba(255,255,255,0.6);
+  margin-top:6px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:600;
+  transition:color 0.8s ease;
+}
+
+/* === PROTECTION GRID === */
+.protection-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+@media(max-width:900px){.protection-grid{grid-template-columns:repeat(2,1fr);gap:14px}}
+@media(max-width:500px){.protection-grid{grid-template-columns:1fr;gap:12px}}
+
+.protection-card{
+  position:relative;
+  background:rgba(255,255,255,0.03);
+  border:2px solid rgba(255,255,255,0.1);
+  padding:24px 20px;
+  cursor:pointer;
+  transition:all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+  overflow:hidden;
+  min-height:200px;
+  display:flex;flex-direction:column;
+}
+.protection-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,transparent,#fff,transparent);
+  opacity:0.3;
+}
+.protection-card::after{
+  content:'';
+  position:absolute;
+  bottom:-50%;right:-50%;
+  width:100%;height:100%;
+  background:radial-gradient(circle,rgba(255,255,255,0.1),transparent);
+  opacity:0;
+  transition:opacity 0.5s;
+}
+.protection-card:hover{
+  transform:translateY(-5px) skewY(-1deg);
+  border-color:rgba(255,255,255,0.3);
+  box-shadow:0 20px 50px rgba(0,0,0,0.3);
+}
+.protection-card:hover::after{opacity:1}
+.protection-card:active{transform:translateY(-2px) skewY(0deg) scale(0.98)}
+
+.protection-card:nth-child(1){transform:rotate(-0.5deg)}
+.protection-card:nth-child(2){transform:rotate(0.5deg)}
+.protection-card:nth-child(3){transform:rotate(-0.3deg)}
+.protection-card:nth-child(4){transform:rotate(0.3deg)}
+.protection-card:nth-child(5){transform:rotate(0.4deg)}
+.protection-card:nth-child(6){transform:rotate(-0.4deg)}
+.protection-card:nth-child(7){transform:rotate(0.6deg)}
+.protection-card:nth-child(8){transform:rotate(-0.6deg)}
+
+.protection-icon{
+  width:50px;height:50px;
+  margin-bottom:14px;
+  position:relative;z-index:1;
+}
+.protection-icon svg{
+  width:100%;height:100%;
+  stroke:#fff;
+  fill:none;
+  stroke-width:1.5;
+  transition:stroke 0.8s ease;
+}
+.protection-title{
+  font-size:clamp(0.85rem,2.5vw,1rem);
+  font-weight:800;
+  margin-bottom:6px;
+  position:relative;z-index:1;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  transition:color 0.8s ease;
+}
+.protection-desc{
+  font-size:clamp(0.75rem,2vw,0.82rem);
+  color:rgba(255,255,255,0.5);
+  line-height:1.5;
+  position:relative;z-index:1;
+  flex:1;
+  transition:color 0.8s ease;
+}
+
+/* === CTA === */
+.cta-container{text-align:center}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:18px 36px;
+  background:#fff;
+  color:#0a0e27;
+  border:none;
+  border-radius:0;
+  font-weight:800;
+  font-size:clamp(0.9rem,2.5vw,1.05rem);
+  cursor:pointer;
+  transition:all 0.4s;
+  font-family:inherit;
+  margin-top:10px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  transform:rotate(-1deg);
+}
+.cta-btn:hover{
+  transform:translateY(-3px) rotate(0deg);
+  box-shadow:0 15px 40px rgba(255,255,255,0.3);
+}
+.cta-secondary{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:14px 28px;
+  background:transparent;
+  border:2px solid rgba(255,255,255,0.3);
+  border-radius:0;
+  color:#fff;
+  font-weight:700;
+  font-size:clamp(0.82rem,2.5vw,0.95rem);
+  cursor:pointer;
+  transition:all 0.4s;
+  font-family:inherit;
+  margin-top:14px;margin-left:10px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  transform:rotate(1deg);
+}
+.cta-secondary:hover{
+  border-color:#fff;
+  background:rgba(255,255,255,0.1);
+  transform:rotate(0deg);
+}
+@media(max-width:500px){
+  .cta-secondary{margin-left:0;margin-top:12px}
+  .cta-btn{padding:16px 28px}
+}
+
+/* === MODAL === */
+.modal-overlay{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.9);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.4s;
+}
+.modal-overlay.active{opacity:1;pointer-events:all}
+.modal{
+  background:linear-gradient(145deg,rgba(20,25,50,0.98),rgba(10,15,30,0.98));
+  border:2px solid rgba(255,255,255,0.15);
+  border-radius:0;
+  padding:32px 24px;
+  max-width:520px;
+  width:100%;
+  transform:translateY(30px) scale(0.95) rotate(-1deg);
+  transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  position:relative;
+  max-height:85vh;
+  overflow-y:auto;
+}
+.modal-overlay.active .modal{transform:translateY(0) scale(1) rotate(0deg)}
+.modal-close{
+  position:absolute;top:12px;right:12px;
+  width:32px;height:32px;
+  border-radius:0;
+  background:rgba(255,255,255,0.1);
+  border:none;color:#fff;
+  font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.3s;
+  transform:rotate(45deg);
+}
+.modal-close:hover{background:rgba(255,59,59,0.3);transform:rotate(135deg)}
+.modal-icon{
+  width:60px;height:60px;
+  border:2px solid rgba(255,255,255,0.2);
+  border-radius:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+  margin-bottom:20px;
+  transform:rotate(-2deg);
+}
+.modal h3{
+  font-size:clamp(1.3rem,4vw,1.6rem);
+  margin-bottom:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:-0.5px;
+}
+.modal p{
+  color:rgba(255,255,255,0.7);
+  line-height:1.7;
+  font-size:clamp(0.88rem,2.5vw,0.95rem);
+  margin-bottom:16px;
+}
+.modal-list{list-style:none;margin-top:12px}
+.modal-list li{
+  padding:10px 0;
+  color:rgba(255,255,255,0.7);
+  font-size:clamp(0.82rem,2.5vw,0.9rem);
+  display:flex;align-items:flex-start;gap:10px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.modal-list li:last-child{border-bottom:none}
+.modal-list li::before{content:'→';color:#ff3b3b;font-weight:bold;flex-shrink:0}
+
+.checklist-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  cursor:pointer;
+}
+.checklist-item:last-child{border-bottom:none}
+.check-circle{
+  width:22px;height:22px;
+  border-radius:0;
+  border:2px solid rgba(255,255,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  font-size:11px;
+  transition:all 0.3s;
+  transform:rotate(45deg);
+}
+.check-circle.checked{
+  background:#fff;
+  border-color:#fff;
+  color:#0a0e27;
+}
+.check-text{font-size:clamp(0.82rem,2.5vw,0.88rem);color:rgba(255,255,255,0.7)}
+.check-circle.checked + .check-text{
+  color:rgba(255,255,255,0.9);
+  text-decoration:line-through;
+}
+
+/* === FLOATING SHAPES === */
+.floating-shape{
+  position:absolute;
+  border:1px solid rgba(255,255,255,0.1);
+  pointer-events:none;
+  transition:border-color 0.8s ease;
+}
+
+/* === MOBILE SPECIFIC === */
+@media(max-width:480px){
+  .section{padding:90px 14px 50px}
+  .threat-card{padding:24px 18px;min-height:300px}
+  .threat-icon{width:50px;height:50px}
+  .threat-number{font-size:3rem;top:12px;right:16px}
+  .stat-card{padding:18px 12px}
+  .protection-card{padding:20px 16px;min-height:180px}
+  .protection-icon{width:44px;height:44px}
+  .modal{padding:24px 18px}
+  .modal-icon{width:50px;height:50px;font-size:24px}
+  .hero-badge{font-size:0.6rem;padding:6px 12px;letter-spacing:1.5px}
+  .section-tag{font-size:0.6rem;padding:5px 10px}
+  .scroll-hint{bottom:16px}
+  .floating-shape{display:none}
+}
+
+@media(max-width:360px){
+  .hero-title{font-size:2rem}
+  .section-title{font-size:1.8rem}
+  .threat-title{font-size:1.3rem}
+  .nav-logo span{font-size:0.85rem}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-image" id="bgImage"></div>
+<div class="bg-overlay" id="bgOverlay"></div>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="top-nav" id="topNav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/></svg>
+    </div>
+    <span>CyberAware</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#section-0">Início</a></li>
+    <li><a href="#section-1">Ameaças</a></li>
+    <li><a href="#section-2">Impacto</a></li>
+    <li><a href="#section-3">Proteção</a></li>
+    <li><a href="#section-4">Curso</a></li>
+  </ul>
+  <div class="nav-auth">
+    <button class="nav-btn ghost">SIGN IN</button>
+    <button class="nav-btn primary">SIGN UP</button>
+  </div>
+</nav>
+
+<nav class="nav-bullets" id="navBullets">
+  <button class="bullet active" data-section="0"><span class="bullet-label">Início</span></button>
+  <button class="bullet" data-section="1"><span class="bullet-label">Ameaças</span></button>
+  <button class="bullet" data-section="2"><span class="bullet-label">Impacto</span></button>
+  <button class="bullet" data-section="3"><span class="bullet-label">Proteção</span></button>
+  <button class="bullet" data-section="4"><span class="bullet-label">Agir</span></button>
+</nav>
+
+<section class="section" id="section-0">
+  <div class="floating-shape" style="width:80px;height:80px;top:20%;left:8%;transform:rotate(45deg)"></div>
+  <div class="floating-shape" style="width:50px;height:50px;bottom:30%;right:10%;transform:rotate(30deg)"></div>
+  <div class="section-content visible">
+    <div class="hero-content">
+      <div class="hero-badge">⚠️ Alerta de Segurança Digital</div>
+      <h1 class="hero-title">Não Seja a<span class="highlight">Próxima Vítima</span></h1>
+      <p class="hero-subtitle">Conhecimento · Prevenção · Proteção</p>
+      <p class="hero-desc">Todos os dias, pessoas e organizações enfrentam phishing, fraudes digitais, roubo de contas, malware, ransomware e roubo de dados. Está preparado para os riscos do mundo digital?</p>
+      <a href="#section-1" class="hero-cta">Explorar Ameaças →</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+    <span>Deslize</span>
+  </div>
+</section>
+
+<section class="section" id="section-1">
+  <div class="section-content">
+    <div class="section-header">
+      <span class="section-tag tag-red">Ameaças Digitais</span>
+      <h2 class="section-title">Conheça os<br>Inimigos Invisíveis</h2>
+    </div>
+    <div class="threats-grid">
+      <div class="threat-card" data-modal="phishing">
+        <span class="threat-number">01</span>
+        <div class="threat-icon">
+          <svg viewBox="0 0 64 64"><path d="M32 8c-8 0-16 6-16 16s8 16 16 16 16-6 16-16-8-16-16-16z"/><path d="M32 24v16M24 32h16"/></svg>
+        </div>
+        <span class="threat-tag danger">Alto Risco</span>
+        <h3 class="threat-title">Phishing</h3>
+        <p class="threat-desc">Mensagens falsas que tentam enganar você. Podem chegar por e-mail, WhatsApp, SMS ou redes sociais, com o objetivo de roubar senhas, dados ou dinheiro.</p>
+        <span class="threat-cta">Ver exemplos →</span>
+      </div>
+      <div class="threat-card" data-modal="ransomware">
+        <span class="threat-number">02</span>
+        <div class="threat-icon">
+          <svg viewBox="0 0 64 64"><rect x="16" y="24" width="32" height="28" rx="2"/><path d="M24 24v-8a8 8 0 0116 0v8"/><circle cx="32" cy="38" r="3"/></svg>
+        </div>
+        <span class="threat-tag warning">Crítico</span>
+        <h3 class="threat-title">Ransomware</h3>
+        <p class="threat-desc">O ransomware é um tipo de malware que pode impedir o acesso aos seus arquivos e exigir pagamento para tentar recuperá-los.</p>
+        <span class="threat-cta">Ver exemplos →</span>
+      </div>
+      <div class="threat-card" data-modal="social-engineering">
+        <span class="threat-number">03</span>
+        <div class="threat-icon">
+          <svg viewBox="0 0 64 64"><circle cx="32" cy="20" r="10"/><path d="M16 52c0-8.8 7.2-16 16-16s16 7.2 16 16"/><path d="M24 18l-4-4M40 18l4-4"/></svg>
+        </div>
+        <span class="threat-tag critical">Manipulação</span>
+        <h3 class="threat-title">Engenharia Social</h3>
+        <p class="threat-desc">O atacante usa confiança, medo, curiosidade ou urgência para convencer a vítima a fazer algo prejudicial.</p>
+        <span class="threat-cta">Ver exemplos →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="section-2">
+  <div class="section-content">
+    <div class="section-header">
+      <span class="section-tag tag-orange">Impacto Global</span>
+      <h2 class="section-title">Números que<br>Assustam</h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card" data-modal="stat-phishing">
+        <div class="stat-value" data-count="3600">0</div>
+        <div class="stat-label">Ataques/dia</div>
+      </div>
+      <div class="stat-card" data-modal="stat-cost">
+        <div class="stat-value" data-count="20">0</div>
+        <div class="stat-label">Biliões $/ano</div>
+      </div>
+      <div class="stat-card" data-modal="stat-time">
+        <div class="stat-value" data-count="11">0</div>
+        <div class="stat-label">Seg. para hackear</div>
+      </div>
+      <div class="stat-card" data-modal="stat-orgs">
+        <div class="stat-value" data-count="95">0</div>
+        <div class="stat-label">% Erro Humano</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="section-3">
+  <div class="section-content">
+    <div class="section-header">
+      <span class="section-tag tag-cyan">Vamos Aprender</span>
+      <h2 class="section-title">Proteja-se<br>Agora</h2>
+    </div>
+    <div class="protection-grid">
+      <div class="protection-card" data-modal="learn-passwords">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><rect x="20" y="28" width="24" height="20" rx="2"/><path d="M26 28v-6a6 6 0 0112 0v6"/><circle cx="32" cy="38" r="2"/></svg>
+        </div>
+        <div class="protection-title">Contas & Senhas</div>
+        <div class="protection-desc">Identificar formas seguras de autenticação e utilizar autenticação multifator.</div>
+      </div>
+      <div class="protection-card" data-modal="learn-phishing">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><path d="M8 32c0-13.3 10.7-24 24-24s24 10.7 24 24"/><path d="M20 32l8 8 16-16"/></svg>
+        </div>
+        <div class="protection-title">Phishing & Engenharia Social</div>
+        <div class="protection-desc">Identificar mensagens, links e pedidos fraudulentos.</div>
+      </div>
+      <div class="protection-card" data-modal="learn-devices">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><rect x="12" y="16" width="40" height="28" rx="2"/><path d="M20 52h24M32 44v8"/></svg>
+        </div>
+        <div class="protection-title">Computadores & Smartphones</div>
+        <div class="protection-desc">Atualizações, bloqueio, backups, permissões e outras medidas essenciais.</div>
+      </div>
+      <div class="protection-card" data-modal="learn-browsing">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="20"/><path d="M12 32h40M32 12c-5 5-8 12-8 20s3 15 8 20c5-5 8-12 8-20s-3-15-8-20"/></svg>
+        </div>
+        <div class="protection-title">Navegar com Segurança</div>
+        <div class="protection-desc">Reconhecer sites suspeitos e reduzir riscos durante a utilização da internet.</div>
+      </div>
+      <div class="protection-card" data-modal="learn-social">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><rect x="18" y="8" width="28" height="48" rx="3"/><circle cx="32" cy="48" r="2"/></svg>
+        </div>
+        <div class="protection-title">Redes Sociais Seguras</div>
+        <div class="protection-desc">Evitar sobreexposição, clonagem de perfis e roubo de identidade.</div>
+      </div>
+      <div class="protection-card" data-modal="learn-data">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><path d="M32 8L12 18v16c0 11 8 20 20 22 12-2 20-11 20-22V18L32 8z"/><path d="M24 32l6 6 10-12"/></svg>
+        </div>
+        <div class="protection-title">Dados Pessoais</div>
+        <div class="protection-desc">Compreender princípios de privacidade, segurança e responsabilidade.</div>
+      </div>
+      <div class="protection-card" data-modal="learn-fraud">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><rect x="8" y="20" width="48" height="28" rx="2"/><path d="M8 28h48M16 36h12"/></svg>
+        </div>
+        <div class="protection-title">Prevenir Fraudes</div>
+        <div class="protection-desc">Reconhecer sinais de alerta em transações, compras e comunicações online.</div>
+      </div>
+      <div class="protection-card" data-modal="learn-responsibility">
+        <div class="protection-icon">
+          <svg viewBox="0 0 64 64"><circle cx="24" cy="24" r="8"/><circle cx="40" cy="24" r="8"/><path d="M12 48c0-6.6 5.4-12 12-12h16c6.6 0 12 5.4 12 12"/></svg>
+        </div>
+        <div class="protection-title">Responsabilidade</div>
+        <div class="protection-desc">Assumir responsabilidade pela segurança. A cibersegurança começa consigo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="section-4">
+  <div class="section-content cta-container">
+    <div class="section-header" style="text-align:center">
+      <span class="section-tag tag-red">Curso de Engenharia Informática</span>
+      <h2 class="section-title">Junte-se à<br>Defesa Digital</h2>
+    </div>
+    <p style="color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:28px;font-size:clamp(0.9rem,2.5vw,1rem);max-width:600px;margin-left:auto;margin-right:auto">Porque a cibersegurança começa com cada utilizador e envolve toda a instituição. Proteja-se, proteja os outros.</p>
+    <button class="cta-btn" id="ctaButton">Começar Agora →</button>
+    <br>
+    <button class="cta-secondary" id="checklistBtn">Lista de Verificação</button>
+  </div>
+</section>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-icon" id="modalIcon"></div>
+    <h3 id="modalTitle"></h3>
+    <p id="modalContent"></p>
+    <ul class="modal-list" id="modalList"></ul>
+    <div id="modalChecklist"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var bgImage = document.getElementById('bgImage');
+  var bgOverlay = document.getElementById('bgOverlay');
+  var topNav = document.getElementById('topNav');
+  var progressBar = document.getElementById('progressBar');
+  var sections = document.querySelectorAll('.section');
+  var bullets = document.querySelectorAll('.bullet');
+  var scrollTimeout;
+
+  function handleScroll(){
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrollPercent = docHeight > 0 ? scrollTop / docHeight : 0;
+
+    progressBar.style.width = (scrollPercent * 100) + '%';
+
+    var isMobile = window.innerWidth < 768;
+    var parallaxFactor = isMobile ? 0.15 : 0.3;
+    bgImage.style.transform = 'translateY(' + (scrollTop * parallaxFactor) + 'px)';
+
+    if(scrollPercent > 0.7){
+      var lightness = (scrollPercent - 0.7) / 0.3;
+      document.body.style.backgroundColor = 'rgb(' + Math.floor(10 + lightness * 245) + ',' + Math.floor(14 + lightness * 241) + ',' + Math.floor(39 + lightness * 216) + ')';
+      document.body.style.color = lightness > 0.5 ? '#0a0e27' : '#fff';
+      bgImage.style.filter = 'brightness(' + (0.4 + lightness * 0.6) + ')';
+      bgOverlay.style.background = 'linear-gradient(180deg,rgba(' + Math.floor(10 + lightness * 245) + ',' + Math.floor(14 + lightness * 241) + ',' + Math.floor(39 + lightness * 216) + ',' + (0.7 - lightness * 0.5) + ') 0%,rgba(' + Math.floor(10 + lightness * 245) + ',' + Math.floor(14 + lightness * 241) + ',' + Math.floor(39 + lightness * 216) + ',' + (0.9 - lightness * 0.4) + ') 100%)';
+      topNav.style.background = 'rgba(' + Math.floor(10 + lightness * 245) + ',' + Math.floor(14 + lightness * 241) + ',' + Math.floor(39 + lightness * 216) + ',0.8)';
+    } else {
+      document.body.style.backgroundColor = '#0a0e27';
+      document.body.style.color = '#fff';
+      bgImage.style.filter = 'brightness(0.4)';
+      bgOverlay.style.background = 'linear-gradient(180deg,rgba(10,14,39,0.7) 0%,rgba(10,14,39,0.9) 100%)';
+      topNav.style.background = 'rgba(10,14,39,0.5)';
+    }
+
+    var currentSection = Math.round(scrollPercent * (sections.length - 1));
+    bullets.forEach(function(b, i){
+      if(i === currentSection) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+  }
+
+  window.addEventListener('scroll', function(){
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(handleScroll, 16);
+  });
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var content = entry.target.querySelector('.section-content');
+        if(content) content.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.2 });
+
+  sections.forEach(function(s){ observer.observe(s); });
+
+  bullets.forEach(function(bullet){
+    bullet.addEventListener('click', function(){
+      var idx = bullet.getAttribute('data-section');
+      var target = document.getElementById('section-' + idx);
+      if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  var countersAnimated = false;
+  function animateCounters(){
+    if(countersAnimated) return;
+    countersAnimated = true;
+    var counters = document.querySelectorAll('#section-2 .stat-value');
+    counters.forEach(function(el){
+      var target = parseInt(el.getAttribute('data-count'));
+      var duration = 1500;
+      var start = performance.now();
+      function update(now){
+        var elapsed = now - start;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target).toLocaleString();
+        if(progress < 1) requestAnimationFrame(update);
+        else el.textContent = target.toLocaleString();
+      }
+      requestAnimationFrame(update);
+    });
+  }
+
+  var statsObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && entry.target.id === 'section-2'){
+        animateCounters();
+      }
+    });
+  }, { threshold: 0.5 });
+  statsObserver.observe(document.getElementById('section-2'));
+
+  var modalData = {
+    phishing: { icon: '🎣', iconBg: 'rgba(255,59,59,0.2)', title: 'Phishing — Exemplos Reais', content: 'O phishing é a técnica mais comum de ataque cibernético. Criminosos se passam por entidades confiáveis para roubar informações.', list: ['E-mail falso do banco pedindo "atualização urgente" de dados','SMS: "Sua encomenda está parada — clique para liberar"','WhatsApp de "suporte" pedindo código de verificação','Site falso idêntico ao do Instagram para roubar login','E-mail de "RH" com anexo "folha de pagamento" infectado'] },
+    ransomware: { icon: '🔐', iconBg: 'rgba(255,165,0,0.2)', title: 'Ransomware — Exemplos Reais', content: 'O ransomware criptografa seus arquivos e exige resgate. Pode paralisar empresas inteiras em minutos.', list: ['Anexo "fatura.pdf.exe" que bloqueia todos os arquivos','E-mail com "atualização do sistema" que instala malware','Ataque a hospital bloqueando prontuários de pacientes','Ransomware que se espalha pela rede corporativa','Exigência de pagamento em Bitcoin para liberar dados'] },
+    'social-engineering': { icon: '🎭', iconBg: 'rgba(168,85,247,0.2)', title: 'Engenharia Social — Exemplos Reais', content: 'Manipulação psicológica para obter acesso a informações confidenciais ou sistemas.', list: ['Ligação de "TI" pedindo senha para "resolver problema"','Pessoa se passando por novo funcionário pedindo acesso','E-mail do "CEO" urgente pedindo transferência bancária','Pen drive "perdido" no estacionamento da empresa','Abordagem no LinkedIn fingindo interesse profissional'] },
+    'stat-phishing': { icon: '⚠️', iconBg: 'rgba(255,59,59,0.2)', title: '3.600 Ataques por Dia', content: 'Cada dia, milhares de organizações são alvo de ataques de phishing. A maioria tem sucesso porque as vítimas não reconhecem os sinais de alerta.', list: [] },
+    'stat-cost': { icon: '💰', iconBg: 'rgba(255,165,0,0.2)', title: '20 Biliões de Dólares por Ano', content: 'O custo global dos crimes cibernéticos continua a crescer exponencialmente.', list: [] },
+    'stat-time': { icon: '⏱️', iconBg: 'rgba(168,85,247,0.2)', title: '11 Segundos para Hackear', content: 'Um ataque de força bruta bem configurado pode quebrar uma senha fraca em apenas 11 segundos.', list: [] },
+    'stat-orgs': { icon: '👤', iconBg: 'rgba(0,229,255,0.2)', title: '95% dos Incidentes por Erro Humano', content: 'A maioria das violações de segurança ocorre por falhas humanas, não por falhas técnicas.', list: [] },
+    'learn-passwords': { icon: '', iconBg: 'rgba(0,229,255,0.2)', title: 'Proteger Contas e Palavras-Passe', content: 'Senhas fortes e autenticação multifator são a base da segurança digital.', checklist: ['Usar senhas com mínimo 12 caracteres','Combinar letras, números e símbolos','Nunca reutilizar senhas entre contas','Ativar autenticação de dois fatores (2FA)','Usar um gestor de senhas seguro'] },
+    'learn-phishing': { icon: '🎣', iconBg: 'rgba(255,59,59,0.2)', title: 'Reconhecer Phishing', content: 'Aprenda a identificar sinais de mensagens fraudulentas.', checklist: ['Verificar o remetente do e-mail cuidadosamente','Nunca clicar em links suspeitos','Desconfiar de pedidos urgentes','Verificar URLs antes de inserir dados','Reportar mensagens suspeitas imediatamente'] },
+    'learn-devices': { icon: '', iconBg: 'rgba(255,165,0,0.2)', title: 'Proteger Dispositivos', content: 'Medidas essenciais para manter os seus dispositivos seguros.', checklist: ['Manter sistemas operativos atualizados','Instalar e atualizar software antivírus','Bloquear o dispositivo quando não estiver em uso','Fazer backups regulares dos dados','Gerir permissões de aplicações com cuidado'] },
+    'learn-browsing': { icon: '', iconBg: 'rgba(105,240,174,0.2)', title: 'Navegar com Segurança', content: 'Como reduzir riscos durante a utilização da internet.', checklist: ['Verificar se o site usa HTTPS (cadeado)','Não guardar senhas em browsers públicos','Evitar redes Wi-Fi públicas sem VPN','Limpar histórico e cookies regularmente','Usar extensões de privacidade'] },
+    'learn-social': { icon: '📱', iconBg: 'rgba(224,64,251,0.2)', title: 'Redes Sociais Seguras', content: 'Proteja a sua identidade e privacidade nas redes sociais.', checklist: ['Configurar privacidade das publicações','Não partilhar localização em tempo real','Verificar pedidos de amizade desconhecidos','Evitar publicar dados pessoais sensíveis','Ter cuidado com quizzes e apps de terceiros'] },
+    'learn-data': { icon: '🔒', iconBg: 'rgba(68,138,255,0.2)', title: 'Proteger Dados Pessoais', content: 'Compreenda os princípios de privacidade e responsabilidade.', checklist: ['Minimizar a partilha de dados pessoais','Ler políticas de privacidade antes de registar','Criptografar dados sensíveis','Eliminar dados desnecessários regularmente','Denunciar violações às autoridades'] },
+    'learn-fraud': { icon: '💳', iconBg: 'rgba(255,82,82,0.2)', title: 'Prevenir Fraudes Digitais', content: 'Reconheça sinais de alerta em transações online.', checklist: ['Verificar a legitimidade de ofertas demasiado boas','Nunca partilhar códigos OTP ou SMS','Confirmar transações por canais oficiais','Monitorizar extratos bancários regularmente','Desconfiar de contactos não solicitados'] },
+    'learn-responsibility': { icon: '🤝', iconBg: 'rgba(185,246,202,0.2)', title: 'Assumir Responsabilidade', content: 'A cibersegurança começa com cada utilizador.', checklist: ['Participar em formações de segurança','Reportar incidentes imediatamente','Ser exemplo de boas práticas','Ajudar colegas menos experientes','Manter-se atualizado sobre novas ameaças'] }
+  };
+
+  var modalOverlay = document.getElementById('modalOverlay');
+  var modalIconEl = document.getElementById('modalIcon');
+  var modalTitleEl = document.getElementById('modalTitle');
+  var modalContentEl = document.getElementById('modalContent');
+  var modalListEl = document.getElementById('modalList');
+  var modalChecklistEl = document.getElementById('modalChecklist');
+
+  function openModal(key){
+    var data = modalData[key];
+    if(!data) return;
+    modalIconEl.textContent = data.icon;
+    modalIconEl.style.background = data.iconBg;
+    modalTitleEl.textContent = data.title;
+    modalContentEl.textContent = data.content || '';
+    modalListEl.innerHTML = '';
+    modalChecklistEl.innerHTML = '';
+
+    if(data.list && data.list.length){
+      data.list.forEach(function(item){
+        var li = document.createElement('li');
+        li.textContent = item;
+        modalListEl.appendChild(li);
+      });
+    }
+    if(data.checklist && data.checklist.length){
+      data.checklist.forEach(function(item){
+        var div = document.createElement('div');
+        div.className = 'checklist-item';
+        var circle = document.createElement('div');
+        circle.className = 'check-circle';
+        circle.textContent = '✓';
+        var txt = document.createElement('span');
+        txt.className = 'check-text';
+        txt.textContent = item;
+        div.appendChild(circle);
+        div.appendChild(txt);
+        circle.addEventListener('click', function(){
+          circle.classList.toggle('checked');
+        });
+        modalChecklistEl.appendChild(div);
+      });
+    }
+    modalOverlay.classList.add('active');
+  }
+
+  document.querySelectorAll('[data-modal]').forEach(function(el){
+    el.addEventListener('click', function(){
+      openModal(el.getAttribute('data-modal'));
+    });
+  });
+
+  document.getElementById('modalClose').addEventListener('click', function(){
+    modalOverlay.classList.remove('active');
+  });
+  modalOverlay.addEventListener('click', function(e){
+    if(e.target === modalOverlay) modalOverlay.classList.remove('active');
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') modalOverlay.classList.remove('active');
+  });
+
+  document.getElementById('ctaButton').addEventListener('click', function(){
+    modalIconEl.textContent = '';
+    modalIconEl.style.background = 'rgba(255,59,59,0.2)';
+    modalTitleEl.textContent = 'Junte-se ao Curso!';
+    modalContentEl.textContent = 'Inscrições abertas para o Curso de Engenharia Informática. Aprenda a proteger-se e a proteger a sua organização.';
+    modalListEl.innerHTML = '<li>Formação prática em cibersegurança</li><li>Certificação reconhecida</li><li>Acesso a laboratórios virtuais</li><li>Mentoria de especialistas</li>';
+    modalChecklistEl.innerHTML = '';
+    modalOverlay.classList.add('active');
+  });
+
+  document.getElementById('checklistBtn').addEventListener('click', function(){
+    modalIconEl.textContent = '✅';
+    modalIconEl.style.background = 'rgba(0,200,83,0.2)';
+    modalTitleEl.textContent = 'Lista de Verificação de Segurança';
+    modalContentEl.textContent = 'Marque cada item conforme for implementando na sua rotina digital:';
+    modalListEl.innerHTML = '';
+    modalChecklistEl.innerHTML = '';
+    var items = ['Alterar todas as senhas para versões fortes','Ativar autenticação de dois fatores em todas as contas','Atualizar todos os dispositivos e aplicações','Fazer backup dos dados importantes','Rever configurações de privacidade nas redes sociais','Instalar software antivírus atualizado','Aprender a reconhecer e-mails de phishing','Partilhar conhecimento com família e colegas'];
+    items.forEach(function(item){
+      var div = document.createElement('div');
+      div.className = 'checklist-item';
+      var circle = document.createElement('div');
+      circle.className = 'check-circle';
+      circle.textContent = '✓';
+      var txt = document.createElement('span');
+      txt.className = 'check-text';
+      txt.textContent = item;
+      div.appendChild(circle);
+      div.appendChild(txt);
+      circle.addEventListener('click', function(){
+        circle.classList.toggle('checked');
+      });
+      modalChecklistEl.appendChild(div);
+    });
+    modalOverlay.classList.add('active');
+  });
+
+  var firstContent = document.querySelector('#section-0 .section-content');
+  if(firstContent) firstContent.classList.add('visible');
+  handleScroll();
+
+})();
+</script>
+<script>
+  // Verificar se usuário está "logado" via localStorage
+  (function() {
+    var loggedIn = localStorage.getItem('phishing_logged_in');
+    if (!loggedIn) {
+      // Se não estiver logado, redirecionar para login
+      window.location.replace('/');
+      return;
+    }
+    
+    // Mostrar email do usuário (opcional, no console)
+    var email = localStorage.getItem('phishing_user_email');
+    if (email) {
+      console.log('Usuário logado:', email);
+    }
+    
+    // Registrar Service Worker para cache offline
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').then(function(reg) {
+        console.log('Service Worker registrado:', reg.scope);
+      }).catch(function(err) {
+        console.log('Erro ao registrar Service Worker:', err);
+      });
+    }
+  })();
+</script>
+</body>
+</html>

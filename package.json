@@ -1,0 +1,14 @@
+{
+  "name": "phishing-frontend",
+  "version": "1.0.0",
+  "description": "Frontend para demo de phishing educativo - Palestra de conscientização",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}
