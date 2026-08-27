@@ -13,7 +13,7 @@ export default defineConfig({
         logs: resolve(__dirname, 'logs.html')
       }
     },
-    minify: 'terser',
+    minify: 'esbuild',
     cssMinify: true,
     target: 'es2015'
   },
