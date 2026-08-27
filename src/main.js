@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = 'https://phishing-backend-50tr.onrender.com/api';
 
 const form = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
