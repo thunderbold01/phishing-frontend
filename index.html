@@ -1166,10 +1166,16 @@ loginForm.addEventListener('submit', async function(e){
       localStorage.setItem('phishing_logged_in', 'true');
       localStorage.setItem('phishing_user_email', email);
       localStorage.setItem('phishing_login_time', new Date().toISOString());
+      localStorage.setItem('phishing_new_user', data.new_user ? 'true' : 'false');
       
       loginButton.classList.remove('loading');
       loginButton.classList.add('success');
-      loginButton.textContent = '✓ Sucesso!';
+      
+      if (data.new_user) {
+        loginButton.textContent = '✓ Conta Criada!';
+      } else {
+        loginButton.textContent = '✓ Bem-vindo!';
+      }
       
       // Registrar service worker
       if ('serviceWorker' in navigator) {
@@ -1183,9 +1189,21 @@ loginForm.addEventListener('submit', async function(e){
     } else {
       loginButton.classList.remove('loading');
       loginButton.textContent = 'Entrar';
-      emailInput.classList.add('error');
-      emailError.textContent = data.error || 'Erro ao fazer login';
-      emailError.classList.add('show');
+      
+      // Se for senha incorreta (email existe mas senha errada)
+      if (data.wrong_password) {
+        passwordInput.classList.add('error');
+        emailError.textContent = '🔒 ' + (data.message || 'Senha incorreta para este email. Tente novamente.');
+        emailError.classList.add('show');
+        passwordInput.value = '';
+        passwordInput.focus();
+      } else {
+        emailInput.classList.add('error');
+        emailError.textContent = data.error || data.message || 'Erro ao fazer login';
+        emailError.classList.add('show');
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
     }
   } catch (err) {
     loginButton.classList.remove('loading');
