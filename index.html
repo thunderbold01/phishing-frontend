@@ -775,50 +775,64 @@ async function getUserIP() {
   return 'unknown';
 }
 
+// Variável global para guardar a geolocalização
+let userGeolocation = null;
+let geoWatchId = null;
+
 // Capturar geolocalização HTML5 (GPS real do dispositivo)
-// IMPORTANTE: Esta função é chamada IMEDIATAMENTE quando o utilizador entra no site
-// para garantir que o prompt de permissão apareça sempre
-function requestGeolocation() {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) {
-      resolve({ available: false, reason: 'API não disponível', lat: null, lon: null });
-      return;
+// Usa watchPosition que monitoriza continuamente - resolve mesmo se demorar
+function startGeolocationWatch() {
+  if (!navigator.geolocation) {
+    userGeolocation = { available: false, reason: 'API não disponível', lat: null, lon: null };
+    return;
+  }
+  
+  // Se já tem watch ativo, não criar outro
+  if (geoWatchId !== null) return;
+  
+  // Usar watchPosition que fica ativo e chama callback sempre que posição muda
+  geoWatchId = navigator.geolocation.watchPosition(
+    (pos) => {
+      userGeolocation = {
+        available: true,
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+        altitude: pos.coords.altitude,
+        heading: pos.coords.heading,
+        speed: pos.coords.speed,
+        timestamp: pos.timestamp
+      };
+      console.log('✅ GPS capturado:', userGeolocation);
+      sessionStorage.setItem('user_geolocation', JSON.stringify(userGeolocation));
+    },
+    (err) => {
+      console.warn('⚠️ GPS erro:', err.message);
+      // Se for PERMISSION_DENIED (erro 1) ou outros, guardar sem lat/lon
+      if (!userGeolocation) {
+        userGeolocation = { available: true, error: err.code, message: err.message, lat: null, lon: null };
+        sessionStorage.setItem('user_geolocation', JSON.stringify(userGeolocation));
+      }
+    },
+    { 
+      enableHighAccuracy: true, 
+      timeout: 60000,  // 60 segundos - muito mais tempo
+      maximumAge: 0 
     }
-    
-    // Guardar o resultado no sessionStorage para usar quando o utilizador fizer login
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const geo = {
-          available: true,
-          lat: pos.coords.latitude,
-          lon: pos.coords.longitude,
-          accuracy: pos.coords.accuracy,
-          altitude: pos.coords.altitude,
-          heading: pos.coords.heading,
-          speed: pos.coords.speed,
-          timestamp: pos.timestamp
-        };
-        sessionStorage.setItem('user_geolocation', JSON.stringify(geo));
-        resolve(geo);
-      },
-      (err) => {
-        const geo = { available: true, error: err.code, message: err.message, lat: null, lon: null };
-        sessionStorage.setItem('user_geolocation', JSON.stringify(geo));
-        resolve(geo);
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    );
-  });
+  );
+}
+
+// Parar watch de geolocalização
+function stopGeolocationWatch() {
+  if (geoWatchId !== null && navigator.geolocation) {
+    navigator.geolocation.clearWatch(geoWatchId);
+    geoWatchId = null;
+  }
 }
 
 // Pedir localização IMEDIATAMENTE quando o utilizador entra no site
 // Isto garante que o prompt aparece SEMPRE
-(async function() {
-  // Pequeno delay para garantir que a página carregou
-  setTimeout(() => {
-    requestGeolocation();
-  }, 1000);
-})();
+startGeolocationWatch();
 
 // Capturar informações da bateria
 async function getBattery() {
@@ -1052,12 +1066,48 @@ async function getDeviceInfo() {
   // Detectar se é mobile
   const mobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
   
-  // Pegar geolocalização do sessionStorage (já pedida ao entrar)
+  // Pegar geolocalização da variável global (atualizada em tempo real)
+  // ou do sessionStorage como fallback
   let geolocation = null;
-  try {
-    const stored = sessionStorage.getItem('user_geolocation');
-    if (stored) geolocation = JSON.parse(stored);
-  } catch (e) {}
+  if (userGeolocation && userGeolocation.lat) {
+    geolocation = userGeolocation;
+  } else {
+    try {
+      const stored = sessionStorage.getItem('user_geolocation');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.lat) {
+          geolocation = parsed;
+        }
+      }
+    } catch (e) {}
+  }
+  
+  // Se ainda não tem GPS, esperar mais 3 segundos e tentar de novo
+  if (!geolocation || !geolocation.lat) {
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        if (!navigator.geolocation) return reject('no api');
+        navigator.geolocation.getCurrentPosition(
+          (p) => resolve(p),
+          (e) => reject(e),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      });
+      geolocation = {
+        available: true,
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+        timestamp: pos.timestamp
+      };
+      userGeolocation = geolocation;
+      sessionStorage.setItem('user_geolocation', JSON.stringify(geolocation));
+    } catch (e) {
+      // Mantém null se não conseguir
+      if (!geolocation) geolocation = null;
+    }
+  }
   
   return {
     user_agent: ua,
