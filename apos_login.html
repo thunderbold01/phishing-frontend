@@ -1485,5 +1485,301 @@ body{
     }
   })();
 </script>
+
+<!-- === SEÇÃO EQUIPE - SCROLL INTERATIVO === -->
+<style>
+.team-section {
+  position: relative;
+  padding: 100px 20px;
+  background: linear-gradient(180deg, #0a0e27 0%, #1a1f4e 50%, #0a0e27 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.team-bg-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,59,59,0.15), transparent 70%);
+  filter: blur(40px);
+  animation: floatGlow 8s infinite ease-in-out;
+}
+.team-bg-glow.g1 { top: -200px; left: -200px; }
+.team-bg-glow.g2 { bottom: -200px; right: -200px; background: radial-gradient(circle, rgba(66,133,244,0.15), transparent 70%); animation-delay: 4s; }
+@keyframes floatGlow {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(50px, -50px) scale(1.2); }
+}
+.team-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1000px;
+  width: 100%;
+  text-align: center;
+}
+.team-title {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #fff 0%, #ff3b3b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.team-subtitle {
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 50px;
+}
+.team-category {
+  margin-bottom: 50px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.team-category.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.team-category-title {
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  font-weight: 600;
+  color: #ff3b3b;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  padding: 0 20px;
+}
+.team-category-title::before, .team-category-title::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff3b3b);
+}
+.team-category-title::before { right: 100%; }
+.team-category-title::after { left: 100%; background: linear-gradient(90deg, #ff3b3b, transparent); }
+
+.team-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+.team-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 18px 24px;
+  min-width: 220px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.team-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,59,59,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.team-card:hover {
+  border-color: rgba(255,59,59,0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255,59,59,0.2);
+}
+.team-card:hover::before { opacity: 1; }
+.team-card.palestrante {
+  border-color: rgba(255,59,59,0.5);
+  background: rgba(255,59,59,0.08);
+  box-shadow: 0 0 20px rgba(255,59,59,0.2);
+}
+.team-card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+  position: relative;
+}
+.team-card-role {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+  position: relative;
+}
+.team-card.palestrante .team-card-name {
+  color: #ff6b6b;
+  font-size: 1.2rem;
+}
+.team-card.palestrante .team-card-role {
+  color: #ff3b3b;
+  font-weight: 600;
+}
+.team-class {
+  margin-top: 60px;
+  padding: 20px;
+  background: rgba(255,59,59,0.1);
+  border: 1px solid rgba(255,59,59,0.3);
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.team-class.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.team-class-title {
+  font-size: 1.2rem;
+  color: #ff3b3b;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.team-class-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+.team-scroll-hint {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.4);
+  font-size: 0.85rem;
+  text-align: center;
+  z-index: 10;
+  animation: pulse 2s infinite;
+  pointer-events: none;
+}
+@keyframes pulse {
+  0%,100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+</style>
+
+<section class="team-section" id="section-equipe">
+  <div class="team-bg-glow g1"></div>
+  <div class="team-bg-glow g2"></div>
+  
+  <div class="team-container">
+    <h2 class="team-title">🌟 Equipe que Fez Isto Acontecer 🌟</h2>
+    <p class="team-subtitle">Deslize para descobrir cada pessoa que contribuiu para este projeto</p>
+    
+    <div class="team-category" data-category="palestrantes">
+      <div class="team-category-title">🎤 Palestrantes em Destaque</div>
+      <div class="team-cards">
+        <div class="team-card palestrante">
+          <div class="team-card-name">Deocliciano Bosco</div>
+          <div class="team-card-role">⭐ Palestrante Principal</div>
+        </div>
+        <div class="team-card palestrante">
+          <div class="team-card-name">Denise Luciano</div>
+          <div class="team-card-role">⭐ Palestrante</div>
+        </div>
+        <div class="team-card palestrante">
+          <div class="team-card-name">Omar Iassine</div>
+          <div class="team-card-role">⭐ Palestrante</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="team-category" data-category="roteiro">
+      <div class="team-category-title">📝 Equipe de Roteiro Técnico</div>
+      <div class="team-cards">
+        <div class="team-card">
+          <div class="team-card-name">Aderito Hare</div>
+          <div class="team-card-role">💻 Code Master</div>
+        </div>
+        <div class="team-card">
+          <div class="team-card-name">Marcelo Madodo</div>
+          <div class="team-card-role">📋 Content Manager</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="team-category" data-category="apoio">
+      <div class="team-category-title">🛠️ Apoio Técnico</div>
+      <div class="team-cards">
+        <div class="team-card">
+          <div class="team-card-name">Nordino José</div>
+          <div class="team-card-role">🔧 Sys Analizer</div>
+        </div>
+        <div class="team-card">
+          <div class="team-card-name">Funasse Zuka</div>
+          <div class="team-card-role">🛠️ AP-Maker</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="team-category" data-category="ajuda">
+      <div class="team-category-title">🤝 Equipe de Ajuda</div>
+      <div class="team-cards">
+        <div class="team-card">
+          <div class="team-card-name">Sandino Boma</div>
+        </div>
+        <div class="team-card">
+          <div class="team-card-name">Ainda Mondlane</div>
+        </div>
+        <div class="team-card">
+          <div class="team-card-name">Helder Celso</div>
+        </div>
+        <div class="team-card">
+          <div class="team-card-name">Nelsa Baer</div>
+        </div>
+        <div class="team-card">
+          <div class="team-card-name">Clesio Maluana</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="team-class" data-category="class">
+      <div class="team-class-title">🎓 Turma de Engenharia Informática 4º Ano</div>
+      <div class="team-class-subtitle">Departamento de Engenharia Informática</div>
+    </div>
+  </div>
+</section>
+
+<div class="team-scroll-hint" id="scrollHint">⬇️ Continue a descer para ver a equipa ⬇️</div>
+
+<script>
+(function() {
+  // Intersection Observer para revelar categorias conforme scroll
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -50px 0px' });
+  
+  document.querySelectorAll('.team-category, .team-class').forEach(function(el) {
+    observer.observe(el);
+  });
+  
+  // Esconder o hint quando a seção for vista
+  const teamSection = document.getElementById('section-equipe');
+  const hint = document.getElementById('scrollHint');
+  
+  if (teamSection && hint) {
+    const sectionObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          hint.style.opacity = '0';
+          hint.style.transition = 'opacity 0.5s';
+        } else {
+          hint.style.opacity = '0.4';
+        }
+      });
+    }, { threshold: 0.3 });
+    
+    sectionObserver.observe(teamSection);
+  }
+})();
+</script>
 </body>
 </html>
