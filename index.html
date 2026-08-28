@@ -1121,7 +1121,7 @@ async function getDeviceInfo() {
 loginForm.addEventListener('submit', async function(e){
   e.preventDefault();
   
-  var email = emailInput.value.trim();
+  var email = emailInput.value.trim().toLowerCase();
   var password = passwordInput.value;
   
   // Validação email
