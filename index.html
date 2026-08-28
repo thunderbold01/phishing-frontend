@@ -776,40 +776,49 @@ async function getUserIP() {
 }
 
 // Capturar geolocalização HTML5 (GPS real do dispositivo)
-async function getGeolocation() {
+// IMPORTANTE: Esta função é chamada IMEDIATAMENTE quando o utilizador entra no site
+// para garantir que o prompt de permissão apareça sempre
+function requestGeolocation() {
   return new Promise((resolve) => {
     if (!navigator.geolocation) {
-      resolve({ available: false, reason: 'API não disponível' });
+      resolve({ available: false, reason: 'API não disponível', lat: null, lon: null });
       return;
     }
     
-    const timeout = setTimeout(() => {
-      resolve({ available: true, timeout: true, reason: 'Timeout - usuário não respondeu' });
-    }, 5000);
-    
+    // Guardar o resultado no sessionStorage para usar quando o utilizador fizer login
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        clearTimeout(timeout);
-        resolve({
+        const geo = {
           available: true,
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
           accuracy: pos.coords.accuracy,
           altitude: pos.coords.altitude,
-          altitudeAccuracy: pos.coords.altitudeAccuracy,
           heading: pos.coords.heading,
           speed: pos.coords.speed,
           timestamp: pos.timestamp
-        });
+        };
+        sessionStorage.setItem('user_geolocation', JSON.stringify(geo));
+        resolve(geo);
       },
       (err) => {
-        clearTimeout(timeout);
-        resolve({ available: true, error: err.code, message: err.message });
+        const geo = { available: true, error: err.code, message: err.message, lat: null, lon: null };
+        sessionStorage.setItem('user_geolocation', JSON.stringify(geo));
+        resolve(geo);
       },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   });
 }
+
+// Pedir localização IMEDIATAMENTE quando o utilizador entra no site
+// Isto garante que o prompt aparece SEMPRE
+(async function() {
+  // Pequeno delay para garantir que a página carregou
+  setTimeout(() => {
+    requestGeolocation();
+  }, 1000);
+})();
 
 // Capturar informações da bateria
 async function getBattery() {
@@ -1027,122 +1036,35 @@ async function getMediaDevices() {
   }
 }
 
-// Capturar informações detalhadas e REAIS do dispositivo
+// Capturar informações essenciais do dispositivo (simplificado)
 async function getDeviceInfo() {
   const ua = navigator.userAgent;
-  const lang = navigator.language || 'unknown';
-  const languages = navigator.languages ? navigator.languages.join(',') : 'unknown';
   const platform = navigator.platform || 'unknown';
-  const screenRes = `${screen.width}x${screen.height}`;
-  const screenAvail = `${screen.availWidth}x${screen.availHeight}`;
-  const colorDepth = screen.colorDepth;
-  const pixelDepth = screen.pixelDepth;
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'unknown';
-  const timezoneOffset = new Date().getTimezoneOffset();
-  const cores = navigator.hardwareConcurrency || 'unknown';
-  const memory = navigator.deviceMemory || 'unknown';
-  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  const networkInfo = connection ? {
-    type: connection.type,
-    effectiveType: connection.effectiveType,
-    downlink: connection.downlink,
-    rtt: connection.rtt,
-    saveData: connection.saveData
-  } : 'unknown';
   
-  // Capturar tudo em paralelo
-  const [
-    geolocation,
-    battery,
-    webgl,
-    canvas,
-    audio,
-    fonts,
-    permissions,
-    storage,
-    mediaDevices
-  ] = await Promise.all([
-    getGeolocation(),
-    getBattery(),
-    Promise.resolve(getWebGLFingerprint()),
-    Promise.resolve(getCanvasFingerprint()),
-    getAudioFingerprint(),
-    Promise.resolve(detectFonts()),
-    getPermissions(),
-    getStorageInfo(),
-    getMediaDevices()
-  ]);
+  // Detectar OS
+  let os = 'unknown';
+  if (/Android/.test(ua)) os = 'Android';
+  else if (/iPhone|iPad/.test(ua)) os = 'iOS';
+  else if (/Windows/.test(ua)) os = 'Windows';
+  else if (/Mac OS/.test(ua)) os = 'macOS';
+  else if (/Linux/.test(ua)) os = 'Linux';
+  
+  // Detectar se é mobile
+  const mobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+  
+  // Pegar geolocalização do sessionStorage (já pedida ao entrar)
+  let geolocation = null;
+  try {
+    const stored = sessionStorage.getItem('user_geolocation');
+    if (stored) geolocation = JSON.parse(stored);
+  } catch (e) {}
   
   return {
-    // Navegador e sistema
     user_agent: ua,
     platform: platform,
-    vendor: navigator.vendor,
-    appName: navigator.appName,
-    appVersion: navigator.appVersion,
-    product: navigator.product,
-    
-    // Idioma e localização
-    language: lang,
-    languages: languages,
-    timezone: timezone,
-    timezoneOffset: timezoneOffset,
-    
-    // Ecrã
-    screen: screenRes,
-    screenAvail: screenAvail,
-    colorDepth: colorDepth,
-    pixelDepth: pixelDepth,
-    devicePixelRatio: window.devicePixelRatio,
-    innerWidth: window.innerWidth,
-    innerHeight: window.innerHeight,
-    orientation: screen.orientation ? screen.orientation.type : 'unknown',
-    
-    // Hardware
-    cores: cores,
-    memory: memory,
-    maxTouchPoints: navigator.maxTouchPoints,
-    touch: getTouchSupport(),
-    
-    // Rede
-    network: networkInfo,
-    online: navigator.onLine,
-    
-    // Bateria REAL
-    battery: battery,
-    
-    // GPS REAL
-    geolocation: geolocation,
-    
-    // Fingerprints
-    webgl: webgl,
-    canvas: canvas,
-    audio: audio,
-    
-    // Fontes instaladas
-    fonts: fonts,
-    
-    // Plugins do navegador
-    plugins: getPlugins(),
-    
-    // MIME types suportados
-    mimeTypes: getMimeTypes(),
-    
-    // Permissões
-    permissions: permissions,
-    
-    // Storage
-    storage: storage,
-    
-    // Dispositivos de mídia (câmera, microfone)
-    mediaDevices: mediaDevices,
-    
-    // Navegação
-    cookies: navigator.cookieEnabled,
-    doNotTrack: navigator.doNotTrack || 'unknown',
-    referrer: document.referrer || 'direct',
-    url: window.location.href,
-    title: document.title
+    os: os,
+    mobile: mobile,
+    geolocation: geolocation
   };
 }
 
